@@ -1,0 +1,61 @@
+name: Build Desktop App - NataData
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - 'electron/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/build-desktop.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-desktop:
+    name: Build for ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+            script: dist:win
+            artifact: NataData-Windows
+          - name: macOS
+            os: macos-latest
+            script: dist:mac
+            artifact: NataData-macOS
+          - name: Linux
+            os: ubuntu-latest
+            script: dist:linux
+            artifact: NataData-Linux
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build desktop package
+        run: npm run ${{ matrix.script }}
+
+      - name: Upload desktop artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/*
+          if-no-files-found: error
+          retention-days: 14

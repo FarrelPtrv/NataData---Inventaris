@@ -28,7 +28,7 @@
         <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-6 border border-slate-800">
             <div class="text-center space-y-2">
                 <div class="flex justify-center mb-2">
-                    <img src="logo.jpeg" id="authLogo" alt="NataData Logo" class="w-24 h-24 rounded-2xl shadow-sm object-contain bg-white border border-slate-100">
+                    <img src="assets/natadata-logo.svg" id="authLogo" alt="NataData Logo" class="w-24 h-24 rounded-2xl shadow-sm object-contain bg-white border border-slate-100">
                 </div>
                 <h1 class="text-2xl font-bold text-slate-900" id="authTitle">Selamat Datang</h1>
                 <p class="text-xs text-slate-500">Aplikasi Manajemen Stok & Penjualan UMKM</p>
@@ -100,7 +100,7 @@
             <div class="space-y-6">
                 <!-- Logo & Toko Name -->
                 <div class="flex items-center space-x-3 px-2">
-                    <img id="sidebarLogo" src="logo.jpeg" alt="Logo" class="w-10 h-10 rounded-xl shadow-md object-contain bg-white border border-slate-700">
+                    <img id="sidebarLogo" src="assets/natadata-logo.svg" alt="Logo" class="w-10 h-10 rounded-xl shadow-md object-contain bg-white border border-slate-700">
                     <div>
                         <h1 class="font-black text-xl text-white tracking-tight">NataData</h1>
                     </div>
@@ -164,7 +164,7 @@
             <header class="md:hidden bg-slate-900 text-white px-4 py-3 shadow-md z-10 flex justify-between items-center shrink-0">
                 <div class="flex items-center space-x-2.5">
                     <!-- Memanggil logo logo.jpeg -->
-                    <img id="headerLogo" src="logo.jpeg" alt="Logo" class="w-9 h-9 rounded-lg shadow-sm object-contain bg-white border border-slate-700">
+                    <img id="headerLogo" src="assets/natadata-logo.svg" alt="Logo" class="w-9 h-9 rounded-lg shadow-sm object-contain bg-white border border-slate-700">
                     <div>
                         <h1 class="font-bold text-base leading-tight">NataData</h1>
                         <p class="text-[10px] text-emerald-400" id="headerStoreName">Toko Berkah Utama</p>
@@ -742,7 +742,7 @@
     <!-- APPLICATION LOGIC SCRIPT -->
     <script>
         const DEFAULT_STORE_NAME = 'Toko Anda';
-        const DEFAULT_LOGO = 'img/logo.jpeg'; 
+        const DEFAULT_LOGO = 'assets/natadata-logo.svg'; 
         
         let storeName = DEFAULT_STORE_NAME;
         let storeLogo = DEFAULT_LOGO;
@@ -915,7 +915,7 @@
 
         function resetDataDefault() {
             document.getElementById('confirmDeleteTitle').innerText = "Reset Data Toko";
-            document.getElementById('confirmDeleteText').innerText = `Yakin ingin mengosongkan seluruh data produk dan transaksi pada toko "${storeName}"?`;
+            document.getElementById('confirmDeleteText').innerText = `Yakin ingin mengosongkan seluruh data produk dan transaksi pada toko "${activeStoreId}"?`;
             document.getElementById('modalConfirmDelete').classList.remove('hidden');
             itemToDeleteId = 'RESET_ACTION';
         }
@@ -963,12 +963,6 @@
             const headerLogoEl = document.getElementById('headerLogo');
             if (sidebarLogoEl) sidebarLogoEl.src = storeLogo;
             if (headerLogoEl) headerLogoEl.src = storeLogo;
-        }
-
-        function openModalNamaToko() {
-            document.getElementById('inputNamaToko').value = storeName;
-            document.getElementById('inputLogoUrl').value = storeLogo === DEFAULT_LOGO ? '' : storeLogo;
-            document.getElementById('modalNamaToko').classList.remove('hidden');
         }
 
         function closeModalNamaToko() {
