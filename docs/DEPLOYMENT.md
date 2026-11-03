@@ -1,82 +1,119 @@
-# Deployment Website NataData
+# Deployment NataData
 
-NataData adalah situs statis (satu `index.html`), sehingga cocok dipublikasikan lewat **GitHub Pages**.
+> **Kondisi aktual saat audit:** repository `FarrelPtrv/NataData---Inventaris` kosong. **Tidak ditemukan** folder `.github/workflows`, konfigurasi GitHub Pages, maupun hosting lain. Jadi tidak ada workflow yang bisa dijelaskan sebagai "sudah ada". Dokumen ini memberi **prosedur dan usulan** yang ditandai jelas. Status deployment (aktif/tidak) **tidak dapat dipastikan** dari bukti yang tersedia.
 
-> **Status:** workflow `.github/workflows/pages.yml` adalah **usulan baru dan belum diuji**. Belum ada bukti bahwa website NataData sudah dipublikasikan, dan URL-nya belum dapat dipastikan. Repository ini tidak berisi konfigurasi hosting lain (Netlify, Vercel, dsb.).
+NataData berupa file statis (HTML + aset), jadi cocok dihosting di layanan hosting statis seperti GitHub Pages. Tidak ada langkah build untuk versi web.
 
 ## 1. Persiapan repository
 
-1. Pastikan file berikut sudah di-push ke branch `main`: `index.html`, `logo.jpeg`, `.github/workflows/pages.yml`. Panduan push ada di [DEVELOPMENT.md](DEVELOPMENT.md#9-mengunggah-push-ke-github).
-2. Pastikan `.github/workflows/` berada **di akar repository**, bukan di dalam folder lain.
-3. Repository publik dapat memakai GitHub Pages di paket gratis. Untuk repository privat, ketersediaan bergantung pada paket akun Anda (periksa dokumentasi GitHub).
+1. Pastikan file berikut ada di akar repository (atau folder `src/` bila memakai Tauri):
+   - `index.html` (**nama harus `index.html`**)
+   - `logo.jpeg` dan folder `img/` berisi `logo.jpeg`
+2. Commit dan push ke branch `main`:
 
-## 2. Mengaktifkan GitHub Pages
-
-Langkah ini dilakukan **sekali** di antarmuka GitHub, karena workflow tidak dapat mengaktifkannya sendiri tanpa pengaturan tambahan:
-
-1. Buka repository → **Settings → Pages**.
-2. Pada **Build and deployment → Source**, pilih **GitHub Actions**.
-
-Jika langkah ini dilewati, workflow biasanya gagal dengan pesan *Get Pages site failed* atau *Not Found* (lihat [TROUBLESHOOTING.md](TROUBLESHOOTING.md#2-error-get-pages-site-failed--not-found)).
-
-## 3. Pengaturan izin GitHub Actions
-
-Workflow sudah menyatakan izin sendiri:
-
-```yaml
-permissions:
-  contents: read     # membaca kode
-  pages: write       # menerbitkan ke Pages
-  id-token: write    # verifikasi deployment (OIDC)
+```bash
+git add .
+git commit -m "Tambah aplikasi NataData dan dokumentasi"
+git push origin main
 ```
 
-Jika organisasi atau repository Anda membatasi izin Actions, cek **Settings → Actions → General** dan pastikan Actions diizinkan berjalan.
+3. Pastikan folder `.github` ada di **akar** repository (bukan di dalam subfolder), bila memakai workflow. Folder berawalan titik kadang tidak ikut terunggah saat unggah lewat antarmuka web; gunakan `git push` atau pilih "Add file → Create new file" dengan mengetik jalur `.github/workflows/nama.yml`.
 
-## 4. Fungsi workflow `pages.yml`
+## 2. Pilihan A, GitHub Pages tanpa workflow (paling sederhana)
+
+1. Buka repository → **Settings** → **Pages**.
+2. Pada **Build and deployment → Source** pilih **Deploy from a branch**.
+3. Pilih branch `main` dan folder `/ (root)`, lalu **Save**.
+4. Tunggu beberapa menit. Alamat situs muncul di bagian atas halaman Pages.
+
+URL yang **diperkirakan** untuk repository ini: `https://farrelptrv.github.io/NataData---Inventaris/` **[Belum diverifikasi; salin URL dari halaman Settings → Pages]**.
+
+Jalur `logo.jpeg` dan `img/logo.jpeg` bersifat relatif sehingga tetap bekerja di subpath tersebut, selama berkas ada di tempat yang sama dengan `index.html`.
+
+Catatan **[Belum diverifikasi, cek ketentuan GitHub saat ini]**: GitHub Pages untuk repository privat biasanya membutuhkan paket berbayar; repository publik gratis.
+
+## 3. Pilihan B, GitHub Pages dengan GitHub Actions (usulan)
+
+> **Usulan, bukan file yang ada di repository, belum dijalankan.** Simpan sebagai `.github/workflows/pages.yml`. Periksa versi *action* terbaru di dokumentasi GitHub.
+
+```yaml
+name: Deploy NataData ke GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .          # ganti ke "src" bila aset web ada di folder src/
+      - id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+Agar workflow ini bekerja, **Settings → Pages → Source** harus diset ke **GitHub Actions**.
 
 | Bagian | Fungsi |
 |---|---|
-| `on: push: branches: [main]` | Berjalan otomatis setiap push ke `main` |
-| `on: workflow_dispatch` | Bisa dijalankan manual dari tab Actions |
-| `concurrency` | Mencegah dua deployment berjalan bersamaan |
-| Langkah *Siapkan folder publikasi* | Menyalin **hanya** `index.html` (dan `logo.jpeg` jika ada) ke `_site/`, agar `README.md`, `docs/`, dan file lain tidak ikut diterbitkan |
-| `configure-pages`, `upload-pages-artifact`, `deploy-pages` | Rangkaian resmi GitHub untuk menerbitkan situs |
+| `on.push.branches: [main]` | Pemicu: setiap push ke `main` |
+| `on.workflow_dispatch` | Pemicu manual dari tab Actions |
+| `permissions.pages: write` | Izin menerbitkan ke Pages |
+| `permissions.id-token: write` | Izin token OIDC yang dibutuhkan `deploy-pages` |
+| `configure-pages` | Memeriksa/menyiapkan konfigurasi Pages |
+| `upload-pages-artifact` | Mengemas folder statis |
+| `deploy-pages` | Menerbitkan hasil kemasan |
 
-Versi action yang dipakai: `checkout@v4`, `configure-pages@v5`, `upload-pages-artifact@v3`, `deploy-pages@v4`. Periksa apakah masih versi yang dianjurkan GitHub.
+Jika `path: .`, seluruh isi repository (termasuk `docs/`, bila ada) ikut dipublikasikan. Gunakan `path: src` bila ingin hanya aset web.
 
-## 5. Menjalankan deployment
+## 4. Menjalankan deployment
 
-- **Otomatis:** push ke `main`.
-- **Manual:** tab **Actions** → *Deploy NataData ke GitHub Pages* → **Run workflow**.
+- **Pilihan A:** otomatis setiap push ke `main` (dikelola GitHub).
+- **Pilihan B:** push ke `main`, atau tab **Actions** → pilih workflow → **Run workflow**.
 
-## 6. Memeriksa status
+## 5. Memeriksa status dan mendapatkan URL
 
-1. Tab **Actions**: cari run terbaru. Centang hijau berarti berhasil, silang merah berarti gagal (klik untuk melihat log).
-2. **Settings → Pages**: bagian atas menampilkan status dan URL situs setelah berhasil.
+1. Tab **Actions**: cek status run (hijau = sukses, merah = gagal; klik run untuk log).
+2. **Settings → Pages**: URL situs ditampilkan di bagian atas bila sudah terbit.
+3. Pada Pilihan B, URL juga muncul pada langkah *deploy* di log run.
+4. Buka URL, tekan Ctrl+F5, lalu cek DevTools → Console/Network bila tampilan tidak lengkap.
 
-## 7. Mendapatkan URL website
+## 6. Perlu diketahui tentang data pada versi web
 
-Setelah run berhasil, URL tampil di:
+Data `localStorage` terikat pada alamat situs. Pengguna yang membuka NataData dari URL Pages akan memiliki data **terpisah** dari yang membuka file langsung atau aplikasi Tauri. Dan **siapa pun yang tahu URL dapat membuka aplikasinya** (tetapi mereka hanya melihat data di browser mereka sendiri, bukan data toko Anda).
 
-- Ringkasan run di tab Actions (job `deploy`, bagian *github-pages*), dan
-- **Settings → Pages**.
+## 7. Rilis aplikasi desktop
 
-Untuk repository proyek, polanya biasanya `https://<nama-akun>.github.io/<nama-repository>/`. Nama repository ini mengandung tiga tanda hubung (`NataData---Inventaris`), jadi **salin URL persis dari GitHub**, jangan menebak. Pola ini belum diverifikasi untuk repository ini.
+Pembuatan installer dibahas di [TAURI_BUILD.md](TAURI_BUILD.md), termasuk usulan workflow `workflow_dispatch` yang menghasilkan artefak. Belum ada workflow rilis di repository.
 
-## 8. Catatan penting setelah publikasi
+## 8. Pemecahan masalah deployment
 
-- **Data tidak ikut diterbitkan.** Data toko ada di browser masing-masing pengguna. Orang yang membuka URL tersebut mulai dari data kosong/contoh.
-- **Situs publik.** Siapa pun yang punya URL dapat membuka aplikasi. Karena PIN belum berfungsi, jangan menyimpan data sensitif.
-- **Origin berbeda = data berbeda.** `localStorage` terikat ke alamat situs. Data yang dibuat di `localhost` tidak muncul di alamat GitHub Pages.
-- **HTTPS:** GitHub Pages memakai HTTPS, sehingga CDN yang dimuat lewat `https://` bekerja normal.
+Lihat [TROUBLESHOOTING.md](TROUBLESHOOTING.md), terutama bagian "Get Pages site failed", workflow tidak muncul, dan situs 404.
 
-## 9. Memecahkan masalah
+Daftar periksa cepat:
 
-Lihat [TROUBLESHOOTING.md](TROUBLESHOOTING.md). Pemeriksaan cepat:
-
-| Pemeriksaan | Pertanyaan |
+| Periksa | Benar jika |
 |---|---|
-| Workflow muncul di Actions? | Jika tidak: lokasi `.github/workflows/pages.yml` salah atau belum ter-push |
-| Source Pages = GitHub Actions? | Jika tidak: *Get Pages site failed* |
-| Run gagal di langkah mana? | Baca pesan error pada log langkah tersebut |
-| Halaman terbuka tetapi tanpa gaya? | CDN diblokir atau offline |
+| Pages aktif | Settings → Pages menampilkan Source terpilih |
+| Source sesuai metode | Workflow memakai Source = GitHub Actions; tanpa workflow memakai Deploy from a branch |
+| Lokasi workflow | `.github/workflows/*.yml` di akar repo |
+| Izin | `pages: write` dan `id-token: write` ada pada workflow |
+| Pengaturan Actions | Settings → Actions → General mengizinkan workflow berjalan |
+| `index.html` | Ada di akar (atau folder yang dipublikasikan) |

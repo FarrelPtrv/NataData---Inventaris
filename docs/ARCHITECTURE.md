@@ -1,177 +1,167 @@
 # Arsitektur NataData
 
-Dokumen ini menjelaskan **implementasi aktual** di `index.html` (1.718 baris). Nomor baris merujuk ke file tersebut dan bisa bergeser jika file diubah.
+Dokumen ini menjelaskan arsitektur **yang benar-benar ada di kode** (`index.html`). Bagian Tauri ditandai *(rencana)* karena belum ada di repository.
 
-## 1. Gambaran Umum
+## 1. Gambaran umum
 
-NataData adalah *single-page application* tanpa framework dan tanpa backend. Satu file HTML berisi tiga hal:
-
-| Bagian | Lokasi di `index.html` | Isi |
-|---|---|---|
-| Head | baris 3–23 | Pemuatan Tailwind, Lucide, Chart.js, font Inter, dan CSS kecil |
-| Markup | baris 26–723 | Layar login, kerangka aplikasi, 5 tampilan, 3 modal |
-| Logika | baris 725–1717 | Satu blok `<script>` berisi state, fungsi render, dan penyimpanan |
+NataData adalah *single-page application* tanpa framework dan tanpa server. Semua logika berjalan di browser, dan data disimpan di `localStorage`.
 
 ```mermaid
 flowchart LR
-    U[Pengguna] --> B[Browser]
-    B --> H[index.html]
-    H -->|CDN| T[Tailwind CSS]
-    H -->|CDN| L[Lucide icons]
-    H -->|CDN| C[Chart.js]
-    H -->|CDN| F[Google Fonts]
-    H --> J[JavaScript inline]
-    J <-->|baca/tulis| S[(localStorage browser)]
-    H -.->|file lokal| G[logo.jpeg]
+    U[Pengguna] --> UI["Antarmuka HTML + Tailwind<br/>(index.html)"]
+    UI --> JS["Logika JavaScript<br/>(tag script di index.html)"]
+    JS <--> LS[("localStorage<br/>browser/WebView")]
+    JS --> CH[Chart.js]
+    JS --> LU[Lucide Icons]
+    CDN[("CDN: Tailwind, Lucide,<br/>Chart.js, Google Fonts")] -.dimuat saat start.-> UI
 ```
 
-Tidak ditemukan: panggilan API (`fetch`/`XMLHttpRequest`), database, autentikasi server, *service worker*, atau manifest PWA.
+Tidak ditemukan: backend, API, database online, autentikasi sungguhan, service worker, atau manifest PWA.
 
-## 2. Komponen Utama
+## 2. Komponen utama
 
-| Komponen | Id elemen | Fungsi |
+| Komponen | Letak di `index.html` | Fungsi |
 |---|---|---|
-| Layar login | `authScreen` | Form ID Toko, Nama Toko, PIN |
-| Kerangka aplikasi | `mainApp` | Sidebar (desktop), header dan bottom nav (mobile), area konten |
-| Dashboard | `viewDashboard` | Ringkasan harian |
-| Stok | `viewStok` | Daftar, cari, filter produk |
-| Transaksi | `viewTransaksi` | 3 form (Barang Masuk, Penjualan, Penyesuaian) dan riwayat |
-| Laporan | `viewLaporan` | Angka ringkasan dan 2 grafik |
-| Notifikasi | `viewNotifikasi` | Daftar stok menipis |
-| Modal edit produk | `modalBarang` | Ubah data produk |
-| Modal ubah toko | `modalNamaToko` | Ubah nama dan URL logo |
-| Modal konfirmasi | `modalConfirmDelete` | **Dipakai bersama** untuk hapus produk, reset data, dan keluar |
+| Layar autentikasi | `#authScreen`, `#formRegister`, `#formLogin` | Pendaftaran toko + PIN, login PIN |
+| Kerangka aplikasi | `#mainApp` | Sidebar desktop (`<aside class="hidden md:flex">`), header + navigasi bawah untuk ponsel |
+| Lima "tab" | `#viewDashboard`, `#viewStok`, `#viewTransaksi`, `#viewLaporan`, `#viewNotifikasi` | Dipindah oleh `switchTab()` dengan menyembunyikan/menampilkan elemen |
+| Tiga sub-form transaksi | `#formBarangMasuk`, `#formPenjualan`, `#formBarangKeluar` | Dipindah oleh `switchSubTrans()` |
+| Modal | `#modalBarang`, `#modalNamaToko`, `#modalConfirmDelete` | Edit produk, ubah toko/logo, konfirmasi (hapus, keluar, reset) |
+| Toast | `#toastNotification` | Pesan sukses/galat (`showToast()`) |
 
-## 3. Peta Fungsi
+## 3. Tanggung jawab fungsi JavaScript
 
-| Fungsi | Baris | Tanggung jawab |
+| Kelompok | Fungsi | Tugas |
 |---|---|---|
-| `window.onload` | 765 | Menampilkan tanggal, memulihkan sesi dari `localStorage` |
-| `sanitizeInput` | 783 | Meng-*escape* `& < > " '` |
-| `handleLogin` | 790 | Validasi form, membuat `activeStoreId`, memuat data |
-| `loadStoreData` / `saveDataToStorage` | 809 / 825 | Baca dan tulis data toko |
-| `showMainApp` | 833 | Render semua tampilan setelah masuk |
-| `handleLogout` / `resetDataDefault` | 847 / 854 | Membuka modal konfirmasi |
-| `executeDelete` | 1194 | Mengeksekusi aksi modal konfirmasi: keluar, reset, atau hapus produk |
-| `switchTab` / `switchSubTrans` | 927 / 1275 | Pindah tampilan dan sub-form |
-| `updateDashboard` | 973 | Hitung dan isi kartu dashboard |
-| `renderStokList` | 1040 | Daftar produk (dengan pencarian dan filter) |
-| `handleSaveEditBarang` / `deleteBarang` | 1138 / 1167 | Edit dan hapus produk |
-| `handleBarangMasuk` | 1300 | Tambah produk baru atau tambah stok |
-| `handlePenjualan` | 1377 | Catat penjualan |
-| `handleBarangKeluar` | 1436 | Catat penyesuaian stok |
-| `renderTransactionHistory` | 1487 | Riwayat transaksi |
-| `renderNotifications` | 1535 | Daftar stok menipis |
-| `initCharts` / `updateCharts` | 1576 / 1636 | Membuat dan memperbarui grafik serta angka laporan |
+| Startup & sesi | `window.onload`, `checkAuthState`, `handleRegister`, `handleLoginAuth`, `handleLogout`, `showMainApp` | Menentukan layar yang tampil berdasarkan `localStorage` |
+| Persistensi | `loadStoreData`, `saveDataToStorage` | Membaca/menulis state ke `localStorage` |
+| Tampilan | `updateStoreNameUI`, `switchTab`, `updateDashboard`, `renderStokList`, `renderTransactionHistory`, `renderNotifications`, `populateSelectOptions` | Membangun ulang HTML dari array `items` dan `transactions` |
+| Stok | `handleSaveEditBarang`, `deleteBarang`, `executeDelete`, `filterKategori` | Edit, hapus, filter |
+| Transaksi | `handleBarangMasuk`, `handlePenjualan`, `handleBarangKeluar`, `updateCalcPenjualan` | Mengubah stok dan menambah riwayat |
+| Laporan | `initCharts`, `updateCharts` | Menghitung ringkasan dan menggambar grafik |
+| Utilitas | `generateId`, `getIsoDateStr`, `formatDateTime`, `formatRp`, `escapeHTML` | Pembantu. (`sanitizeInput` terdefinisi tetapi tidak dipakai.) |
 
-## 4. Model Data
+Pola render: setiap perubahan data memanggil rangkaian `saveDataToStorage()` lalu fungsi `render*`/`update*` yang membangun ulang `innerHTML`. Tidak ada state management terpisah. State global: `items`, `transactions`, `storeName`, `storeLogo`.
 
-State berada di variabel global: `activeStoreId`, `storeName`, `storeLogo`, `items`, `transactions`.
+## 4. Model data
 
-**Produk** (`items[]`)
+### Produk (`items[]`)
 
-```js
-{ id, sku, nama, kategori, satuan, hargaBeli, hargaJual, stok, minStok }
-```
+| Field | Tipe | Keterangan |
+|---|---|---|
+| `id` | string | `crypto.randomUUID()` (cadangan: `Date.now()` + acak) |
+| `sku` | string | Otomatis `SKU-XXXXXX` bila kosong |
+| `nama`, `kategori`, `satuan` | string | Kategori: Makanan/Minuman/Sembako/Lainnya |
+| `hargaBeli`, `hargaJual` | number | Rupiah |
+| `stok`, `minStok` | number | Notifikasi bila `stok <= minStok` |
 
-`kategori` bernilai salah satu: `Makanan`, `Minuman`, `Sembako`, `Lainnya`. Produk baru memakai `id: Date.now()`, sedangkan data contoh memakai 1–4.
+### Transaksi (`transactions[]`, terbaru di awal via `unshift`)
 
-**Transaksi** (`transactions[]`, yang terbaru di indeks 0)
+| Field | Keterangan |
+|---|---|
+| `id` | `TRX-` + 8 karakter acak |
+| `tipe` | `penjualan`, `masuk`, atau `keluar` |
+| `itemNama`, `qty`, `satuan` | **Nama** produk disalin ke transaksi, bukan `id` produk |
+| `total` | Penjualan: harga jual × qty. Masuk: harga beli × qty. Keluar: 0 |
+| `laba` | Penjualan: (jual − beli) × qty. Lainnya: 0 |
+| `dateIso`, `timestamp` | `YYYY-MM-DD` (zona waktu lokal) dan ISO-UTC |
+| `catatan` | Masuk: catatan/supplier. Keluar: alasan. Penjualan: tidak ada |
 
-```js
-{ id, tipe, itemNama, qty, total, laba, tglDisplay, dateIso, catatan? }
-```
+Konsekuensi desain: karena transaksi menyimpan nama (bukan relasi ke produk), mengganti nama produk atau menghapus produk **tidak mengubah riwayat lama**, dan "produk terlaris" mengelompokkan berdasarkan nama.
 
-| `tipe` | Arti | `total` | `laba` |
-|---|---|---|---|
-| `penjualan` | Barang terjual | `hargaJual × qty` | `(hargaJual − hargaBeli) × qty` |
-| `masuk` | Barang masuk | `hargaBeli × qty` (modal keluar) | 0 |
-| `keluar` | Penyesuaian stok | 0 | 0 |
+## 5. Mekanisme penyimpanan
 
-Transaksi menyimpan **nama produk** (`itemNama`), bukan id produk. Tidak ada relasi ke produk.
-
-## 5. Mekanisme Penyimpanan
-
-Semua data disimpan di `localStorage` dengan kunci berikut. Awalan `stokin_` adalah nama lama dan **tidak berubah** walau mereknya kini NataData.
+Kunci `localStorage` yang digunakan:
 
 | Kunci | Isi |
 |---|---|
-| `stokin_active_session` | ID toko yang sedang aktif (untuk masuk otomatis) |
-| `stokin_name_<idToko>` | Nama toko |
-| `stokin_logo_<idToko>` | URL logo (atau `logo.jpeg`) |
-| `stokin_items_<idToko>` | JSON daftar produk |
-| `stokin_trx_<idToko>` | JSON daftar transaksi |
+| `natadata_setup` | `"true"` bila toko sudah dibuat |
+| `natadata_password` | PIN 6 angka, **teks biasa** |
+| `natadata_active_session` | `"true"` bila sedang login |
+| `natadata_store_name`, `natadata_logo` | Nama toko dan URL/jalur logo |
+| `natadata_items`, `natadata_trx` | JSON array produk dan transaksi |
 
-| Operasi | Cara |
+Operasi data (CRUD):
+
+| Operasi | Dilakukan oleh |
 |---|---|
-| Create | `items.push(...)` / `transactions.unshift(...)`, lalu `saveDataToStorage()` |
-| Read | `loadStoreData()` saat masuk atau memulihkan sesi |
-| Update | Ubah objek di memori, lalu `saveDataToStorage()` |
-| Delete | `items.splice(...)` setelah konfirmasi. **Transaksi tidak bisa dihapus.** |
+| Create produk | `handleBarangMasuk` (produk baru) |
+| Read | `loadStoreData` + fungsi render |
+| Update produk | `handleSaveEditBarang` (edit langsung, **tidak mencatat transaksi**), `handleBarangMasuk` (tambah stok + timpa harga), `handlePenjualan`/`handleBarangKeluar` (kurangi stok) |
+| Delete produk | `deleteBarang` → `executeDelete` (permanen, riwayat tetap) |
+| Reset | `executeDelete` dengan aksi `RESET_ACTION` memanggil `localStorage.clear()` |
 
-Setiap perubahan menulis ulang seluruh data toko. Tidak ada versi skema, migrasi, atau penanganan kuota penuh.
+Tidak ada penanganan galat untuk `JSON.parse` dan `localStorage.setItem` (misalnya data rusak atau kuota penuh).
 
-## 6. Alur Interaksi Pengguna
+## 6. Alur interaksi pengguna
 
 ```mermaid
 flowchart TD
-    A[Buka aplikasi] --> B{Ada stokin_active_session?}
-    B -- Ya --> E[loadStoreData lalu showMainApp]
-    B -- Tidak --> C[Layar login]
-    C --> D[handleLogin: cek isian dan panjang PIN]
-    D --> E
-    E --> F[Dashboard]
-    F --> G[Stok]
-    F --> H[Transaksi]
-    F --> I[Laporan]
-    F --> J[Notifikasi]
+    A[Buka aplikasi] --> B{natadata_setup = true?}
+    B -- Tidak --> C[Form Buat Profil Toko + PIN]
+    C --> F
+    B -- Ya --> D{natadata_active_session?}
+    D -- Ya --> F[Aplikasi utama]
+    D -- Tidak --> E[Form Login PIN]
+    E -- PIN cocok --> F
+    E -- salah --> E
+    F --> G[Dashboard / Stok / Transaksi / Laporan / Notifikasi]
+    G --> H[Keluar Toko: hapus session saja]
+    H --> E
+    G --> I["Reset Data Toko (sidebar desktop)"]
+    I --> C
 ```
 
-## 7. Alur Transaksi
+## 7. Alur proses transaksi
 
 ```mermaid
-sequenceDiagram
-    participant U as Pengguna
-    participant F as Form
-    participant S as State items dan transactions
-    participant L as localStorage
-    participant V as Tampilan
-
-    U->>F: Isi form lalu kirim
-    F->>F: Validasi (produk ada, stok cukup)
-    alt Valid
-        F->>S: Ubah stok, tambah transaksi
-        S->>L: saveDataToStorage()
-        S->>V: Render ulang dashboard, stok, riwayat, notifikasi, grafik
-    else Tidak valid
-        F->>V: Toast error
+flowchart TD
+    subgraph Penjualan
+      P1[Pilih produk + jumlah] --> P2{qty <= stok?}
+      P2 -- Tidak --> P3[Toast: stok tidak mencukupi]
+      P2 -- Ya --> P4["stok -= qty<br/>transaksi 'penjualan' (total, laba)"]
     end
+    subgraph Barang Masuk
+      M1[Isi form] --> M2{Nama atau SKU sudah ada?}
+      M2 -- Ya --> M3["stok += qty<br/>harga beli & jual ditimpa"]
+      M2 -- Tidak --> M4[Produk baru dibuat]
+      M3 --> M5["transaksi 'masuk'<br/>total = hargaBeli x qty"]
+      M4 --> M5
+    end
+    subgraph Pengurangan
+      K1[Pilih produk, jumlah, alasan] --> K2{qty <= stok?}
+      K2 -- Ya --> K3["stok -= qty<br/>transaksi 'keluar' (total 0)"]
+    end
+    P4 --> S[saveDataToStorage]
+    M5 --> S
+    K3 --> S
+    S --> R[updateDashboard, renderStokList, renderTransactionHistory, renderNotifications, updateCharts]
 ```
 
-Aturan per jenis transaksi:
+## 8. Dependensi dan integrasi eksternal
 
-- **Penjualan:** ditolak bila `qty > stok`. Stok berkurang, laba dihitung dari selisih harga.
-- **Barang masuk:** produk dianggap **sudah ada** jika nama sama (tanpa membedakan huruf besar/kecil) atau SKU sama. Jika ada: stok bertambah, harga beli dan jual diperbarui bila diisi. Jika tidak: produk baru dibuat.
-- **Penyesuaian:** ditolak bila `qty > stok`. Stok berkurang, nilai transaksi 0.
-
-## 8. Dua Definisi "Laba"
-
-| Lokasi | Rumus | Arti |
+| Dependensi | Cara dimuat | Risiko |
 |---|---|---|
-| Dashboard, "Laba Bersih (Hari Ini)" | Jumlah `laba` penjualan hari ini | Margin atas barang yang terjual |
-| Laporan, "Saldo Kas Bersih" | Total omset − total modal restock (seluruh waktu) | Arus kas sederhana |
+| Tailwind CSS | `<script src="https://cdn.tailwindcss.com">` | Butuh internet; tidak untuk produksi; gaya hilang bila gagal dimuat |
+| Lucide | `unpkg.com/lucide@latest` | Versi bisa berubah sewaktu-waktu |
+| Chart.js | `cdn.jsdelivr.net/npm/chart.js` | Versi tidak dikunci; laporan gagal bila tidak termuat |
+| Google Fonts (Inter) | `<link>` | Hanya tampilan (ada fallback `sans-serif`) |
 
-Keduanya sah, tetapi berbeda dan bisa membingungkan jika dibaca sebagai hal yang sama.
+Tidak ada panggilan `fetch`/API lain di kode. Satu-satunya sumber eksternal selain CDN adalah URL logo yang diketik pengguna.
 
-## 9. Dependensi Eksternal
+## 9. Arsitektur dengan Tauri *(rencana, belum ada di repository)*
 
-| Layanan | URL | Dikunci versi? |
-|---|---|---|
-| Tailwind CSS | `https://cdn.tailwindcss.com` | Tidak |
-| Lucide | `https://unpkg.com/lucide@latest` | Tidak (`latest`) |
-| Chart.js | `https://cdn.jsdelivr.net/npm/chart.js` | Tidak |
-| Google Fonts (Inter) | `https://fonts.googleapis.com/...` | Tidak berlaku |
+```mermaid
+flowchart LR
+    subgraph Aplikasi Desktop
+      W["WebView sistem<br/>(WebView2 / WebKit)"] --> H["src/index.html<br/>(kode NataData tanpa ubahan)"]
+      H <--> LS[("localStorage di dalam WebView")]
+      R["Inti Rust Tauri<br/>(src-tauri)"] --- W
+    end
+    H -.-> CDN[(CDN)]
+```
 
-## 10. Arsitektur Android
-
-**Belum ada.** Tidak ada `capacitor.config.*`, folder `android/`, atau `package.json` pada kode yang diaudit. Lihat [ANDROID_BUILD.md](ANDROID_BUILD.md) untuk rencana.
+- Kode web tidak berubah; Tauri hanya memuat `src/` di jendela WebView dan membungkusnya menjadi installer.
+- Inti Rust bawaan tidak berisi logika bisnis NataData.
+- Lokasi fisik `localStorage` bergantung WebView dan OS, dan **belum diverifikasi**.
+- Rincian: [TAURI_BUILD.md](TAURI_BUILD.md).

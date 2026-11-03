@@ -1,180 +1,142 @@
 # Pemecahan Masalah NataData
 
-Setiap masalah berisi **gejala, kemungkinan penyebab, cara memeriksa, dan perbaikan**.
+Keterangan label pada setiap solusi:
+- **[Terverifikasi dari kode]**: penyebab terlihat langsung pada `index.html`.
+- **[Dugaan]**: berdasarkan pengetahuan umum/dokumentasi; belum diuji pada proyek ini.
 
-Penanda status solusi:
+Format tiap masalah: gejala → kemungkinan penyebab → cara memeriksa → perbaikan.
 
-- ✅ **Terverifikasi dari kode:** penyebab terlihat langsung di `index.html` atau konfigurasi.
-- ❓ **Dugaan:** umum terjadi pada kasus serupa, tetapi **belum diuji** pada repository ini.
-
-## Daftar Isi
+## Daftar isi
 
 1. [Workflow GitHub Actions gagal](#1-workflow-github-actions-gagal)
-2. [Error Get Pages site failed / Not Found](#2-error-get-pages-site-failed--not-found)
+2. [Error "Get Pages site failed" / "Not Found"](#2-error-get-pages-site-failed--not-found)
 3. [Workflow tidak muncul di tab Actions](#3-workflow-tidak-muncul-di-tab-actions)
-4. [Folder .github/workflows tidak terunggah atau salah lokasi](#4-folder-githubworkflows-tidak-terunggah-atau-salah-lokasi)
+4. [Folder `.github/workflows` tidak terunggah atau salah lokasi](#4-folder-githubworkflows-tidak-terunggah-atau-salah-lokasi)
 5. [Instalasi dependensi gagal](#5-instalasi-dependensi-gagal)
-6. [Build Capacitor atau Android gagal](#6-build-capacitor-atau-android-gagal)
+6. [Build Tauri / Android gagal](#6-build-tauri--android-gagal)
 7. [APK tidak bisa dipasang](#7-apk-tidak-bisa-dipasang)
-8. [Tampilan, ikon, atau grafik tidak termuat](#8-tampilan-ikon-atau-grafik-tidak-termuat)
-9. [Logo tidak muncul](#9-logo-tidak-muncul)
-10. [Data tidak tersimpan atau hilang](#10-data-tidak-tersimpan-atau-hilang)
-11. [Aplikasi macet di layar masuk atau layar kosong](#11-aplikasi-macet-di-layar-masuk-atau-layar-kosong)
-12. [Grafik error setelah keluar lalu masuk lagi](#12-grafik-error-setelah-keluar-lalu-masuk-lagi)
-13. [Nama produk menampilkan kode aneh](#13-nama-produk-menampilkan-kode-aneh)
-14. [Push ke GitHub ditolak](#14-push-ke-github-ditolak)
+8. [Tampilan, ikon, atau grafik tidak termuat (CDN)](#8-tampilan-ikon-atau-grafik-tidak-termuat-cdn)
+9. [Logo tidak tampil](#9-logo-tidak-tampil)
+10. [Data tidak tersimpan / hilang](#10-data-tidak-tersimpan--hilang)
+11. [Lupa PIN](#11-lupa-pin)
+12. [Situs Pages menampilkan 404](#12-situs-pages-menampilkan-404)
 
 ---
 
 ## 1. Workflow GitHub Actions gagal
 
-**Gejala:** run di tab Actions bertanda silang merah.
+> Saat audit tidak ada workflow di repository; bagian ini berlaku bila Anda menambahkan usulan di [DEPLOYMENT.md](DEPLOYMENT.md) atau [TAURI_BUILD.md](TAURI_BUILD.md).
 
-**Cara memeriksa:** klik run → klik job `deploy` → buka langkah yang bertanda merah dan baca pesan terakhirnya.
+| | |
+|---|---|
+| **Gejala** | Run bertanda merah (✗) di tab Actions |
+| **Penyebab mungkin** | Galat sintaks YAML; izin kurang; langkah build gagal; versi *action* tidak ada **[Dugaan]** |
+| **Cara memeriksa** | Tab Actions → klik run → klik langkah yang merah → baca baris galat pertama |
+| **Perbaikan** | Perbaiki sesuai pesan. YAML sangat sensitif spasi (gunakan spasi, bukan tab). Untuk izin, lihat bagian 2 |
 
-| Pesan / langkah gagal | Kemungkinan penyebab | Perbaikan |
-|---|---|---|
-| *Get Pages site failed* | Pages belum diaktifkan | Lihat masalah 2 |
-| *Resource not accessible by integration* | Izin Actions dibatasi | ❓ Cek **Settings → Actions → General**, pastikan Actions diizinkan. Pastikan blok `permissions` di `pages.yml` utuh |
-| Gagal di `Checkout` atau `Konfigurasi` | Gangguan sementara atau versi action | ❓ Jalankan ulang (**Re-run jobs**), cek versi action |
-| `cp: cannot stat 'index.html'` | `index.html` tidak ada di akar repository | ✅ Letakkan `index.html` di akar, bukan di subfolder |
-| Deploy lama tak selesai | Dua run saling menunggu | ❓ Batalkan run lama di tab Actions |
+## 2. Error "Get Pages site failed" / "Not Found"
 
-## 2. Error Get Pages site failed / Not Found
-
-**Gejala:** langkah *Configure Pages* gagal dengan `Get Pages site failed` atau `Not Found`.
-
-**Penyebab paling umum ❓:** GitHub Pages belum diaktifkan, atau Source belum diatur ke GitHub Actions. Ini dugaan umum, belum diuji pada repository ini.
-
-**Perbaikan:**
-
-1. **Settings → Pages**.
-2. Pada **Source** pilih **GitHub Actions**.
-3. Kembali ke tab Actions → **Re-run all jobs**.
-
-Jika tidak ada menu Pages: repository privat pada paket yang tidak mendukung Pages ❓. Jadikan repository publik atau periksa paket akun.
+| | |
+|---|---|
+| **Gejala** | Langkah `configure-pages` gagal dengan pesan *Get Pages site failed* atau *Not Found* |
+| **Penyebab paling mungkin** | GitHub Pages belum diaktifkan, atau **Source** belum diset ke *GitHub Actions* **[Dugaan; pola yang umum]** |
+| **Penyebab lain** | Izin `pages: write` / `id-token: write` tidak ada; kebijakan Actions pada akun/organisasi membatasi; repository privat pada paket tanpa Pages **[Dugaan]** |
+| **Cara memeriksa** | Settings → Pages: apakah Source terisi? Settings → Actions → General: izin workflow. Buka file workflow: cek blok `permissions` |
+| **Perbaikan** | Settings → Pages → Source = **GitHub Actions**, lalu jalankan ulang run (*Re-run all jobs*). Pastikan `permissions` berisi `pages: write` dan `id-token: write` |
 
 ## 3. Workflow tidak muncul di tab Actions
 
-**Cara memeriksa:**
+| | |
+|---|---|
+| **Gejala** | Tab Actions kosong atau workflow tidak ada di daftar kiri |
+| **Penyebab mungkin** | File tidak berada di `.github/workflows/` pada akar; ekstensi bukan `.yml`/`.yaml`; belum di-push ke branch default; YAML tidak valid; Actions dinonaktifkan **[Dugaan]** |
+| **Cara memeriksa** | Di GitHub, buka Code → pastikan jalur persis `.github/workflows/namafile.yml`. Settings → Actions → General |
+| **Perbaikan** | Pindahkan ke jalur yang benar, push ke `main`, aktifkan Actions. Workflow yang hanya memakai `workflow_dispatch` baru muncul bila file ada di branch default |
 
-1. Buka repository di GitHub → telusuri ke `.github/workflows/`. Apakah `pages.yml` ada di sana?
-2. Apakah file berada di **branch default**? Workflow dengan trigger `push` pada `main` perlu ada di `main`.
-3. Apakah Actions dimatikan? Cek **Settings → Actions → General**.
+## 4. Folder `.github/workflows` tidak terunggah atau salah lokasi
 
-**Perbaikan:** lihat masalah 4. Setelah benar, lakukan push baru atau jalankan manual lewat **Run workflow**.
-
-## 4. Folder .github/workflows tidak terunggah atau salah lokasi
-
-**Gejala:** folder `.github` tidak terlihat di GitHub.
-
-| Penyebab | Cara memeriksa | Perbaikan |
-|---|---|---|
-| Diunggah lewat tombol *Upload files* di web (folder berawalan titik sering terlewat) ❓ | Telusuri repo di GitHub | Gunakan `git add .` dan `git push` dari terminal |
-| Nama folder salah (`github`, `.workflow`, `.github/workflow`) ✅ | `git ls-files` | Nama harus tepat `.github/workflows` |
-| Folder di dalam subfolder | `git ls-files \| grep workflows` | Pindahkan ke **akar** repository |
-| Tidak ter-commit | `git status` | `git add .github` lalu commit dan push |
-| Ekstensi salah | Lihat nama file | Harus `.yml` atau `.yaml` |
-
-Perintah pemeriksaan:
-
-```bash
-git ls-files | grep -i workflows
-```
-
-Jika tidak ada keluaran, file belum ter-commit.
+| | |
+|---|---|
+| **Gejala** | Folder tidak ada di repository setelah unggah |
+| **Penyebab mungkin** | Folder berawalan titik disembunyikan/dilewati saat seret-lepas lewat web atau saat mengompres ZIP; folder terunggah di dalam subfolder (misal `NataData/.github/...`) **[Dugaan]** |
+| **Cara memeriksa** | `git ls-files .github` di terminal; atau lihat tampilan Code di GitHub |
+| **Perbaikan** | Gunakan Git: `git add .github && git commit -m "workflow" && git push`. Atau di GitHub: Add file → Create new file → ketik `.github/workflows/pages.yml` sebagai nama |
 
 ## 5. Instalasi dependensi gagal
 
-**Catatan ✅:** repository ini **tidak memiliki `package.json`**, sehingga `npm install` pasti gagal dengan pesan seperti `ENOENT ... package.json`. Itu normal. Aplikasi tidak butuh instalasi.
+Aplikasi web tidak punya dependensi npm. Masalah ini hanya muncul bila Tauri CLI dipasang.
 
-Jika Anda sudah mengikuti [ANDROID_BUILD.md](ANDROID_BUILD.md) dan `npm install` gagal ❓: periksa versi Node (`node --version`) terhadap persyaratan Capacitor, koneksi internet, dan hapus `node_modules` lalu coba lagi.
+| | |
+|---|---|
+| **Gejala** | `npm install` gagal, `npx tauri` tidak dikenal |
+| **Penyebab mungkin** | Tidak ada internet/proxy; Node.js belum terpasang; izin folder; berada di folder yang salah (bukan yang berisi `package.json`) **[Dugaan]** |
+| **Cara memeriksa** | `node -v`, `npm -v`; `dir package.json` (Windows) / `ls package.json` |
+| **Perbaikan** | Pasang Node.js LTS; jalankan di folder proyek; ulangi `npm install -D @tauri-apps/cli@latest`. Jika cache rusak: `npm cache verify` |
 
-## 6. Build Capacitor atau Android gagal
+## 6. Build Tauri / Android gagal
 
-Belum ada konfigurasi Capacitor di repository ini, jadi tidak ada build yang bisa gagal. Setelah Anda menambahkannya, lihat tabel di [ANDROID_BUILD.md](ANDROID_BUILD.md#9-masalah-build-yang-umum-semuanya-dugaan-belum-diverifikasi). Semua isinya ❓ dugaan.
+| Gejala | Penyebab mungkin **[Dugaan]** | Perbaikan |
+|---|---|---|
+| `rustc`/`cargo` tidak dikenal | Rust belum terpasang, atau terminal belum dibuka ulang | Pasang rustup; buka ulang terminal |
+| `linker link.exe not found` (Windows) | Build Tools C++ belum ada | Pasang "Desktop development with C++" |
+| Jendela aplikasi putih/kosong | `frontendDist` salah | Pastikan `"frontendDist": "../src"` dan `src/index.html` ada |
+| Galat konfigurasi `tauri.conf.json` | Memakai format Tauri v1 pada CLI v2 | Gunakan kunci v2 (`productName`, `identifier`, `build.frontendDist`, `app.windows`) |
+| Gagal mengunduh alat installer | Tidak ada internet saat build pertama | Sambungkan internet dan ulangi |
+| Android: SDK/NDK/JAVA_HOME tidak ditemukan | Variabel lingkungan belum diatur | Atur `JAVA_HOME`, `ANDROID_HOME`, `NDK_HOME`; buka ulang terminal |
+| Android: target Rust tidak ada | `rustup target add ...` belum dijalankan | Jalankan perintah di [TAURI_BUILD.md, bagian 12](TAURI_BUILD.md#12-android-opsional) |
+
+Cara umum memeriksa: baca **galat pertama** (bukan yang terakhir) pada keluaran terminal, lalu cari pesan itu di dokumentasi/isu Tauri. Perintah `npx tauri info` menampilkan ringkasan lingkungan Anda **[Dugaan; tersedia pada CLI v2]**.
 
 ## 7. APK tidak bisa dipasang
 
-Belum ada APK dari proyek ini. Jika kelak Anda punya ❓:
+| | |
+|---|---|
+| **Gejala** | "App not installed", "Parse error", atau dilarang memasang |
+| **Penyebab mungkin** | APK rilis belum ditandatangani; sumber tidak dikenal belum diizinkan; versi kunci tanda tangan berbeda dari aplikasi yang sudah terpasang; arsitektur CPU tidak cocok **[Dugaan]** |
+| **Perbaikan** | Gunakan APK debug untuk uji, atau tandatangani APK rilis dengan keystore; aktifkan pemasangan dari sumber tidak dikenal; copot versi lama yang kunci tanda tangannya berbeda |
 
-| Gejala | Kemungkinan penyebab | Perbaikan |
+Belum ada bukti APK NataData pernah dibuat atau diuji.
+
+## 8. Tampilan, ikon, atau grafik tidak termuat (CDN)
+
+| | |
+|---|---|
+| **Gejala** | Halaman tanpa warna/tata letak (Tailwind), ikon kosong (Lucide), laporan kosong atau error `Chart is not defined` (Chart.js) |
+| **Penyebab** | **[Terverifikasi dari kode]** Aplikasi memuat ketiga pustaka dari CDN pada baris 8, 10, dan 12 `index.html`. Tanpa internet, diblokir jaringan/iklan-pemblokir, atau CDN sedang gangguan, pustaka tidak termuat |
+| **Cara memeriksa** | F12 → Network: lihat permintaan `cdn.tailwindcss.com`, `unpkg.com`, `cdn.jsdelivr.net` yang merah |
+| **Perbaikan** | Pastikan internet. Nonaktifkan pemblokir untuk situs. Perbaikan jangka panjang: bundel pustaka secara lokal (perlu persetujuan pemilik proyek) |
+| **Catatan** | Lucide dimuat `@latest` dan Chart.js tanpa versi, sehingga pembaruan di CDN bisa memengaruhi aplikasi sewaktu-waktu |
+
+## 9. Logo tidak tampil
+
+| | |
+|---|---|
+| **Penyebab** | **[Terverifikasi dari kode]** Tag `<img>` awal memakai `logo.jpeg` (baris 31, 103, 167), sedangkan `DEFAULT_LOGO` bernilai `img/logo.jpeg` (baris 745). Setelah aplikasi dimuat, JavaScript menimpa `src` logo sidebar/header dengan `img/logo.jpeg` |
+| **Cara memeriksa** | F12 → Network → filter Img → lihat jalur yang 404 |
+| **Perbaikan** | Pastikan berkas ada pada **kedua** jalur relatif terhadap `index.html`, atau (dengan persetujuan pemilik) seragamkan menjadi satu jalur. Jika logo sudah tampil di lingkungan Anda, struktur folder Anda sudah memenuhi kedua jalur. Pada Tauri/Pages, salin kedua berkas ke folder yang dipublikasikan |
+
+Logo kustom via **Link URL Logo** membutuhkan alamat gambar yang bisa diakses publik.
+
+## 10. Data tidak tersimpan / hilang
+
+| Gejala | Penyebab | Keterangan |
 |---|---|---|
-| "Aplikasi tidak terpasang" | Versi lama dengan tanda tangan berbeda sudah terpasang | Copot aplikasi lama (**data aplikasi ikut hilang**) |
-| Pemasangan diblokir | Sumber tidak dikenal belum diizinkan | Izinkan untuk aplikasi pemasang (File Manager/browser) |
-| "Paket rusak" | Unduhan tidak lengkap | Unduh ulang |
-| Aplikasi dibuka tetapi putih | CDN tidak termuat | Lihat masalah 8 |
+| Data kosong saat dibuka dengan cara lain | `localStorage` per origin: `file://`, `localhost:PORT`, URL Pages, dan aplikasi Tauri masing-masing terpisah **[Terverifikasi dari desain]** | Gunakan satu cara dan satu perangkat |
+| Data hilang setelah bersihkan browser | "Hapus data situs/cookie" menghapus `localStorage` | Belum ada ekspor/cadangan |
+| Tidak tersimpan di mode penyamaran | Penyimpanan dibuang saat jendela ditutup **[Dugaan]** | Jangan pakai mode private |
+| Data hilang setelah Reset | **[Terverifikasi dari kode]** `localStorage.clear()` pada reset | Tidak bisa dipulihkan |
+| Aplikasi aneh/kosong setelah data rusak | `JSON.parse` pada `loadStoreData` tidak dibungkus penanganan galat **[Terverifikasi dari kode]** | Hapus kunci `natadata_items` / `natadata_trx` lewat DevTools (data produk/transaksi ikut hilang) |
+| Gagal menyimpan | Kuota `localStorage` penuh (batas umum beberapa MB per origin) **[Dugaan]** | Tidak ada penanganan galat di kode |
+| Tidak muncul di HP/komputer lain | Tidak ada sinkronisasi | Memerlukan backend (lihat audit) |
 
-## 8. Tampilan, ikon, atau grafik tidak termuat
+## 11. Lupa PIN
 
-**Gejala:** halaman tanpa warna/tata letak, ikon hilang, atau grafik kosong.
+**[Terverifikasi dari kode]** Tidak ada fitur pemulihan. Tombol Reset hanya ada di sidebar setelah login, sehingga tidak bisa dicapai tanpa PIN. PIN tersimpan teks biasa di kunci `natadata_password`: orang dengan akses ke DevTools perangkat dapat membacanya, yang menunjukkan PIN bukan pengaman data. Memulihkan akses berarti menghapus data situs/aplikasi, dan **itu menghapus seluruh data toko**.
 
-**Penyebab ✅:** `index.html` memuat 4 sumber eksternal (Tailwind, Lucide, Chart.js, Google Fonts). Jika salah satu gagal dimuat, bagian itu rusak. Aplikasi **tidak punya cadangan lokal**.
+## 12. Situs Pages menampilkan 404
 
-| Yang rusak | Sumber penyebab |
+| | |
 |---|---|
-| Tata letak dan warna | `cdn.tailwindcss.com` |
-| Ikon | `unpkg.com/lucide@latest` |
-| Grafik | `cdn.jsdelivr.net/npm/chart.js` |
-| Font | `fonts.googleapis.com` (tampilan bergeser ke font bawaan) |
-
-**Cara memeriksa:** F12 → tab **Network**, muat ulang, cari baris berwarna merah atau berstatus gagal. Tab **Console** biasanya menampilkan `ERR_BLOCKED_BY_CLIENT` atau `ERR_NAME_NOT_RESOLVED`.
-
-**Perbaikan:**
-
-1. Pastikan internet aktif.
-2. Matikan sementara ekstensi pemblokir iklan, atau jaringan kantor/sekolah yang memblokir CDN ❓.
-3. Jangka panjang: simpan pustaka secara lokal dan kunci versinya (lihat [AUDIT.md](AUDIT.md), T-01).
-
-## 9. Logo tidak muncul
-
-**Penyebab ✅:** `index.html` memanggil `logo.jpeg` (relatif, di folder yang sama) pada tiga tempat. File gambar tersebut tidak termasuk dalam kode yang diaudit.
-
-**Perbaikan:** letakkan `logo.jpeg` di folder yang sama dengan `index.html` dan push. Nama file **peka huruf besar/kecil** di server GitHub Pages ❓ (`Logo.JPEG` tidak sama dengan `logo.jpeg`). Alternatif: ubah URL logo lewat menu ubah nama toko (tetapi itu tidak mengubah logo layar masuk).
-
-## 10. Data tidak tersimpan atau hilang
-
-**Penyebab yang terverifikasi dari kode ✅:**
-
-- Data hanya ditulis ke `localStorage` perangkat itu.
-- Data dipisah per **ID Toko**. ID yang berbeda (termasuk beda huruf besar/kecil sebelum dinormalkan, atau tanda baca yang dibuang) akan membuka toko lain yang kosong.
-- Alamat berbeda berarti data berbeda: `localhost`, alamat `file://`, dan alamat GitHub Pages punya penyimpanan masing-masing.
-
-**Penyebab umum lain ❓:** mode incognito, penghapusan data situs, pembersih otomatis browser, pembatasan penyimpanan di sebagian browser mobile, dan berganti browser/perangkat.
-
-**Cara memeriksa:** F12 → **Application → Local Storage** → alamat situs → cari kunci `stokin_items_<idToko>`. Jika ada, datanya masih tersimpan.
-
-**Perbaikan:** pastikan ID Toko sama persis, buka dari alamat yang sama, dan jangan memakai incognito. Data yang sudah terhapus **tidak bisa dipulihkan** karena tidak ada cadangan.
-
-## 11. Aplikasi macet di layar masuk atau layar kosong
-
-**Dugaan ❓ yang bersumber dari kode:** data tersimpan rusak dan gagal di-parse. `loadStoreData` memanggil `JSON.parse` tanpa penanganan error (baris 816–820), sehingga data yang korup dapat menghentikan proses masuk. Ini belum direproduksi.
-
-**Cara memeriksa:** F12 → Console, cari `SyntaxError ... JSON`.
-
-**Perbaikan sementara:** di Console jalankan `localStorage.clear()` lalu muat ulang. **Ini menghapus semua data situs.** Jika bisa, catat dulu nilai `stokin_items_<idToko>` dan `stokin_trx_<idToko>` dari tab Application.
-
-## 12. Grafik error setelah keluar lalu masuk lagi
-
-**Dugaan ❓ dari pembacaan kode:** `showMainApp()` memanggil `initCharts()` setiap kali, sedangkan grafik lama tidak pernah dihancurkan (`destroy()`). Chart.js versi baru biasanya menolak membuat grafik kedua di kanvas yang sama dengan pesan seperti *Canvas is already in use*. Belum diuji.
-
-**Cara memeriksa:** masuk → keluar → masuk lagi tanpa memuat ulang halaman → lihat Console.
-
-**Perbaikan sementara:** muat ulang halaman (F5) setelah keluar.
-
-## 13. Nama produk menampilkan kode aneh
-
-**Gejala ✅ (direproduksi dengan logika yang sama secara terpisah):** nama seperti `Ayam Bu Ani's & Kopi` menjadi `Ayam Bu Ani&#039;s &amp; Kopi` setelah produk **diedit dan disimpan**.
-
-**Penyebab:** teks di-*escape* saat disimpan, lalu nilai yang sudah ter-escape dimasukkan kembali ke form edit dan di-*escape* lagi.
-
-**Penghindaran:** hindari tanda `& < > " '` pada nama produk, SKU, dan satuan sampai bug diperbaiki.
-
-## 14. Push ke GitHub ditolak
-
-| Pesan | Perbaikan |
-|---|---|
-| `rejected ... fetch first` | `git pull --rebase origin main` lalu `git push` |
-| `Authentication failed` / diminta kata sandi | Login ulang lewat GitHub Desktop atau `gh auth login`. Kata sandi akun tidak lagi dipakai untuk push lewat HTTPS ❓ |
-| `remote origin already exists` | `git remote set-url origin <URL>` |
-| `src refspec main does not match any` | Belum ada commit. Jalankan `git add .` dan `git commit` dulu |
+| **Penyebab mungkin** | Deployment belum selesai; `index.html` tidak ada di folder yang dipublikasikan; URL salah; Source Pages tidak sesuai **[Dugaan]** |
+| **Cara memeriksa** | Settings → Pages (URL dan status); tab Actions (run sukses?); cek `index.html` di akar |
+| **Perbaikan** | Tunggu beberapa menit; pastikan nama file persis `index.html` (huruf kecil); salin URL dari Settings → Pages |

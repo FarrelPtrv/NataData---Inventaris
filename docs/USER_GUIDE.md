@@ -1,218 +1,129 @@
 # Panduan Pengguna NataData
 
-Panduan ini untuk pemilik usaha dan pengguna non-teknis. Isinya hanya fitur yang benar-benar ada di aplikasi.
+Panduan ini untuk pemilik UMKM dan pengguna non-teknis. Isinya hanya fitur yang benar-benar ada di aplikasi.
 
-> ## Baca dulu: di mana data Anda disimpan
->
-> Data NataData disimpan **di browser perangkat yang Anda pakai**, bukan di internet.
->
-> - Data di HP tidak muncul di laptop, dan sebaliknya.
-> - Jika Anda **menghapus data browser / cache / data situs**, atau memakai **mode penyamaran (incognito)**, data bisa **hilang dan tidak bisa dikembalikan**.
-> - Aplikasi **belum punya fitur cadangan atau ekspor**. Sebagai pengaman sementara, catat angka penting (stok, omset) di buku atau tangkapan layar secara berkala.
-> - **PIN belum berfungsi sebagai pengaman.** Jangan anggap data Anda terkunci.
+> **Penting dipahami sebelum mulai**
+> - Data toko disimpan **di browser/aplikasi pada perangkat yang Anda pakai**. Data tidak otomatis muncul di HP lain atau komputer lain.
+> - Jika data browser dihapus, data NataData ikut hilang. **Belum ada fitur cadangan/ekspor.**
+> - Aplikasi membutuhkan **koneksi internet** agar tampilan dan grafik termuat.
 
-## Daftar Isi
+## 1. Pertama kali memakai
 
-1. [Masuk ke toko](#1-masuk-ke-toko)
-2. [Mengenal tampilan](#2-mengenal-tampilan)
-3. [Dashboard](#3-dashboard)
-4. [Mengelola daftar stok](#4-mengelola-daftar-stok)
-5. [Menambah barang masuk](#5-menambah-barang-masuk)
-6. [Mencatat penjualan](#6-mencatat-penjualan)
-7. [Mengurangi atau menyesuaikan stok](#7-mengurangi-atau-menyesuaikan-stok)
-8. [Riwayat transaksi](#8-riwayat-transaksi)
-9. [Memahami laporan](#9-memahami-laporan)
-10. [Notifikasi stok menipis](#10-notifikasi-stok-menipis)
-11. [Mengubah nama toko dan logo](#11-mengubah-nama-toko-dan-logo)
-12. [Reset data demo](#12-reset-data-demo)
-13. [Keluar dari toko](#13-keluar-dari-toko)
-14. [Contoh alur kerja harian](#14-contoh-alur-kerja-harian)
+1. Buka NataData. Muncul layar **Buat Profil Toko**.
+2. Isi **Nama Toko Anda**.
+3. Buat **PIN Keamanan 6 angka**, lalu ketik ulang di **Konfirmasi PIN**.
+4. Tekan tombol pendaftaran. Aplikasi langsung terbuka.
 
-## 1. Masuk ke toko
+Catatan: PIN harus tepat 6 angka dan kedua isian harus sama. **Catat PIN Anda.** Tidak ada fitur "lupa PIN" (lihat bagian 10).
 
-1. Buka NataData.
-2. Isi **ID Toko / Username**, misalnya `toko_berkah`. Huruf besar diubah menjadi kecil, dan hanya huruf, angka, serta garis bawah (`_`) yang dipakai. Spasi dan tanda baca dibuang.
-3. Isi **Nama Toko** (nama yang tampil di layar).
-4. Isi **PIN 4 digit**. Saat ini PIN hanya diminta, **tidak disimpan dan tidak diperiksa**.
-5. Tekan **Buka Sesi Toko Saya**.
+## 2. Masuk dan keluar
 
-Catatan penting:
-
-- Pada masuk pertama dengan ID Toko baru, aplikasi mengisi **4 produk dan 3 transaksi contoh**. Hapus atau ganti dengan data asli Anda.
-- Memakai ID Toko yang **sama** di browser yang sama akan membuka data yang sama. Memakai ID berbeda membuka toko terpisah.
-- Selama Anda belum menekan keluar, membuka ulang aplikasi akan langsung masuk ke toko terakhir.
-
-## 2. Mengenal tampilan
-
-| Menu | Di layar lebar (laptop) | Di HP (bar bawah) |
-|---|---|---|
-| Ringkasan | Beranda / Dashboard | Beranda |
-| Daftar produk | Daftar Stok Barang | Stok |
-| Catat transaksi | Transaksi & Stok | Transaksi |
-| Grafik dan angka | Laporan Analisis | Laporan |
-| Peringatan | Notifikasi | Notif (ikon lonceng di atas) |
-
-Pada layar lebar, tombol **Reset Data Demo** dan **Keluar Toko** ada di bagian bawah sidebar kiri. Pada HP, tombol keluar ada di ikon di pojok kanan atas, dan **tombol reset tidak tersedia**.
+- **Keluar:** tekan **Keluar Toko** (sidebar di komputer, ikon keluar di bagian atas pada HP), lalu konfirmasi. Data **tidak dihapus**, hanya sesi dikunci.
+- **Masuk lagi:** ketik PIN 6 angka, tekan **Buka Toko Saya**.
 
 ## 3. Dashboard
 
-Menampilkan:
+Menampilkan ringkasan toko:
 
-- **Total Master Produk:** jumlah jenis produk.
-- **Stok Menipis:** jumlah produk yang stoknya sudah sama dengan atau di bawah batas minimum.
-- **Penjualan (Hari Ini):** total omset dan jumlah transaksi penjualan hari ini.
-- **Laba Bersih (Hari Ini):** jumlah laba dari penjualan hari ini (selisih harga jual dan harga beli).
-- **Peringatan Stok Menipis:** banner kuning berisi nama produk yang perlu dibeli lagi (muncul jika ada).
-- **Aksi Cepat:** pintasan ke Input Barang Masuk, Catat Penjualan, dan Lihat Laporan.
+| Informasi | Arti |
+|---|---|
+| Total Master Produk | Jumlah jenis barang yang terdaftar |
+| Stok Menipis | Jumlah barang yang stoknya sama dengan atau di bawah batas minimum |
+| Penjualan (Hari Ini) | Total uang penjualan hari ini dan jumlah transaksinya |
+| Estimasi Laba Kotor | Total margin dari **seluruh** penjualan sejak awal (bukan hanya hari ini) |
+
+Juga ada:
+- **Banner "Peringatan Stok Menipis"** bila ada barang yang perlu restock.
+- **Aksi Cepat:** pintasan ke Barang Masuk, Penjualan, dan Laporan.
 - **Aktivitas Transaksi Terbaru:** 4 transaksi terakhir.
 
-## 4. Mengelola daftar stok
+## 4. Mengelola daftar stok (menu Stok)
 
-Buka **Daftar Stok Barang** (atau **Stok** di HP).
+Setiap barang tampil sebagai kartu berisi kategori, SKU, harga modal, harga jual, dan **Sisa Stok**.
 
-**Mencari:** ketik di kolom pencarian (nama, SKU, atau kategori).
+- **Mencari:** ketik nama, kategori, atau SKU di kolom pencarian.
+- **Menyaring:** pilih Semua, Makanan, Minuman, Sembako, atau Lainnya.
+- **Mengubah barang:** tekan ikon pensil, ubah isian (nama, SKU, kategori, satuan, harga beli, harga jual, stok, minimum stok), lalu simpan.
+- **Menghapus barang:** tekan ikon tempat sampah, lalu konfirmasi.
 
-**Memfilter:** tekan salah satu tombol kategori: Semua, Makanan, Minuman, Sembako, Lainnya.
+> ⚠️ **Hapus barang bersifat permanen** dan tidak bisa dibatalkan. Riwayat transaksi lama tetap tersimpan.
+>
+> ⚠️ **Mengubah angka "Jumlah Stok Saat Ini" lewat Edit tidak tercatat di riwayat transaksi.** Untuk koreksi stok yang tercatat, gunakan **Pengurangan** (bagian 7) atau **Barang Masuk** (bagian 5).
 
-**Membaca kartu produk:** menampilkan kategori, SKU, nama, harga modal, harga jual, dan sisa stok. Produk dengan stok menipis diberi label merah **Menipis**.
+Aturan isian: angka tidak boleh negatif; minimum stok minimal 1.
 
-**Mengubah produk:**
+## 5. Menambahkan barang masuk (menu Transaksi, tab Barang Masuk)
 
-1. Tekan ikon pensil pada produk.
-2. Ubah nama, SKU, kategori, satuan, harga beli, harga jual, jumlah stok, atau minimum stok alert.
-3. Tekan **Simpan Perubahan**.
+Dipakai untuk **barang baru** maupun **menambah stok** barang lama.
 
-**Menghapus produk:**
-
-1. Tekan ikon tempat sampah.
-2. Baca pesan konfirmasi, lalu tekan **Ya, Lanjutkan**.
-
-> **Peringatan:** produk yang dihapus **hilang permanen**. Riwayat transaksi lama tetap ada dan tetap menyebut nama produknya.
-
-## 5. Menambah barang masuk
-
-Dipakai saat Anda **membeli barang dari supplier**, baik produk baru maupun menambah stok produk lama.
-
-1. Buka **Transaksi & Stok**, lalu tab **Barang Masuk** (atau tekan **Input Barang Masuk** di dashboard).
-2. Isi:
-   - **Nama Barang** (wajib)
-   - **SKU / Kode Unik** (terisi otomatis, boleh diganti)
-   - **Kategori**
-   - **Satuan** (wajib), contoh: Pcs, Bks
-   - **Harga Beli/Modal** (wajib) dan **Harga Jual** (wajib)
-   - **Jml Masuk** (wajib, minimal 1)
-   - **Min. Alert** (batas stok menipis)
-   - **Catatan / Supplier** (opsional)
-3. Tekan **Simpan Stok**.
+1. Buka **Transaksi**, pilih tab **Barang Masuk**.
+2. Isi **Nama Barang** (wajib), SKU (terisi otomatis, boleh diubah), kategori, **Satuan** (wajib; bila kosong dianggap "Pcs"), **Harga Beli/Modal** (wajib, lebih dari 0), **Harga Jual**, **Jml Masuk** (wajib), **Min. Alert**, dan catatan/supplier (opsional).
+3. Simpan.
 
 Yang terjadi:
+- Jika **nama atau SKU sama** dengan barang yang sudah ada, stok **ditambah** dan **harga beli serta harga jual diganti** dengan angka yang baru Anda isi. Kategori, satuan, dan minimum stok barang lama tidak berubah.
+- Jika belum ada, barang baru dibuat.
+- Tercatat satu transaksi "Barang Masuk" senilai harga beli × jumlah (dihitung sebagai modal keluar di laporan).
 
-- Jika **nama barang sama** (huruf besar/kecil tidak dibedakan) **atau SKU sama** dengan produk yang ada, stok produk itu **bertambah**, dan harga beli serta harga jual diperbarui. Kategori, satuan, dan minimum alert **tidak berubah**.
-- Jika tidak ada yang sama, produk **baru** dibuat.
-- Satu transaksi *Barang Masuk* tercatat. Nilainya (harga beli × jumlah) dihitung sebagai **modal keluar** di Laporan.
+Tombol batal akan mengosongkan form dan kembali ke menu Stok.
 
-Tombol **Batal** atau **Kembali** mengosongkan form dan membawa Anda ke daftar stok.
+## 6. Mencatat penjualan (tab Penjualan Produk)
 
-## 6. Mencatat penjualan
+1. Pilih **Produk Terdaftar** (daftar menampilkan sisa stok dan harga jual).
+2. Isi **Jumlah Terjual**.
+3. **Total Omset** dan estimasi laba terhitung otomatis.
+4. Simpan.
 
-1. Buka **Transaksi & Stok**, lalu tab **Penjualan Produk**.
-2. Pilih produk pada **Pilih Produk Terdaftar**. Sisa stok dan harga jual tampil di pilihan.
-3. Isi **Jumlah Terjual**.
-4. **Total Omset** dan **Estimasi Laba Kotor** terisi otomatis.
-5. Tekan **Simpan Transaksi Penjualan**.
+Jika jumlah melebihi stok, aplikasi menolak dan menampilkan sisa stok. Setelah berhasil, stok berkurang otomatis dan transaksi masuk riwayat.
 
-Yang terjadi: stok berkurang, penjualan masuk riwayat, dashboard dan laporan ikut berubah. Jika jumlah melebihi stok, muncul pesan **Stok tidak mencukupi** dan transaksi tidak disimpan.
+## 7. Mengurangi atau menyesuaikan stok (tab Penyesuaian Stok)
 
-> Harga jual diambil dari data produk. Tidak ada kolom untuk memberi diskon atau mengubah harga per transaksi. Jika perlu harga lain, ubah dulu harga jual produk di daftar stok.
+Untuk barang yang berkurang **bukan karena dijual**.
 
-## 7. Mengurangi atau menyesuaikan stok
+1. Pilih produk dan isi **Jumlah Pengurangan Stok**.
+2. Pilih **Alasan**: Barang Rusak/Kadaluarsa, Pemakaian Sendiri, Barang Hilang/Rusak saat Pengiriman, Koreksi Selisih Stok Audit, atau **Lainnya** (lalu ketik alasan sendiri).
+3. Simpan.
 
-Dipakai saat stok berkurang **bukan karena penjualan**: barang rusak, dipakai sendiri, hilang, atau selisih saat hitung ulang.
+Pengurangan tidak mengubah omset maupun laba, dan tidak boleh melebihi stok.
 
-1. Buka **Transaksi & Stok**, lalu tab **Penyesuaian Stok**.
-2. Pilih produk dan isi **Jumlah Pengurangan Stok**.
-3. Pilih **Alasan Penyesuaian**: Barang Rusak/Kadaluarsa, Pemakaian Sendiri, Barang Hilang / Rusak Saat Pengiriman, Koreksi Selisih Stok Audit, atau **Lainnya** (lalu ketik alasan sendiri).
-4. Tekan **Simpan Pengurangan Stok**.
-
-> Fitur ini **hanya bisa mengurangi** stok. Untuk menambah stok, gunakan **Barang Masuk**, atau ubah jumlah stok lewat ikon pensil di daftar stok (perubahan lewat cara ini **tidak tercatat** di riwayat).
-
-Penyesuaian tidak dihitung sebagai penjualan maupun modal di laporan.
+> Tab ini hanya untuk pengurangan. Jika stok kurang dari kenyataan, tambah lewat **Barang Masuk**.
 
 ## 8. Riwayat transaksi
 
-Ada di bagian bawah halaman **Transaksi & Stok**, berisi semua transaksi dengan yang terbaru di atas.
+Daftar seluruh aktivitas (penjualan, barang masuk, pengurangan) ada di bagian bawah menu **Transaksi**, terbaru di atas. Setiap baris menampilkan nama barang, jenis, tanggal-jam, catatan/alasan, jumlah, dan nilai uang. Belum ada filter tanggal atau pencarian; riwayat yang panjang akan menjadi daftar panjang.
 
-| Label | Arti | Angka di kanan |
-|---|---|---|
-| **Penjualan** (hijau) | Barang terjual | `+` nilai penjualan |
-| **Barang Masuk** (biru) | Pembelian stok | `-` nilai modal |
-| **Pengurangan** (merah) | Penyesuaian stok | tidak ada nilai |
+## 9. Laporan, notifikasi, nama toko
 
-Catatan: kolom jumlah selalu bertuliskan **"Pcs"** walaupun satuan produknya lain (misalnya Karung atau Bks). Keterangan waktu selalu tertulis **"Hari Ini, jam:menit"** walau transaksinya sudah beberapa hari lalu. Tidak ada cara mengubah atau menghapus transaksi.
+**Laporan** menampilkan:
+- Total Omset Penjualan, Total Laba Kotor, dan Total Modal Keluar (Restock).
+- **Arus Kas Bersih** = omset dikurangi total modal barang masuk. Ini hitungan **sederhana**: tidak memuat biaya lain, dan modal barang yang belum terjual ikut mengurangi.
+- Produk terlaris (berdasarkan jumlah terjual).
+- Grafik penjualan 7 hari terakhir dan komposisi stok per kategori (jumlah unit).
 
-## 9. Memahami laporan
+**Notifikasi** menampilkan barang dengan stok ≤ minimum, dengan tombol **Restock** menuju form Barang Masuk. Angka merah di menu menunjukkan jumlahnya.
 
-Buka **Laporan Analisis**.
+**Mengubah nama toko dan logo:** tekan ikon pensil di dekat nama toko, ubah nama, dan (opsional) isi **Link URL Logo** berupa alamat gambar. Kosongkan untuk memakai logo bawaan. Belum ada unggah file logo.
 
-| Angka | Arti |
-|---|---|
-| **Saldo Kas Bersih (Omset − Modal Keluar)** | Seluruh omset penjualan dikurangi seluruh modal barang masuk, dari awal pemakaian |
-| **Total Omset Penjualan** | Jumlah semua penjualan |
-| **Total Modal Keluar (Restock)** | Jumlah semua nilai barang masuk |
-| **Produk Terlaris** | Produk dengan jumlah terjual terbanyak |
-| **Grafik Penjualan 7 Hari Terakhir** | Omset harian 7 hari terakhir |
-| **Komposisi Stok Per Kategori** | Perbandingan jumlah stok (unit) tiap kategori |
+## 10. Reset data dan lupa PIN
 
-**Penting:** *Saldo Kas Bersih* **bukan** sama dengan laba. Jika Anda baru membeli banyak stok, angkanya bisa negatif (tampil dengan tanda minus) walaupun penjualan bagus, karena stok yang belum terjual sudah dihitung sebagai uang keluar. Untuk melihat laba dari barang yang terjual, lihat **Laba Bersih (Hari Ini)** di Dashboard.
+**Reset Data Toko** ada di sidebar tampilan komputer/layar lebar, setelah login.
 
-## 10. Notifikasi stok menipis
+> 🛑 **BERBAHAYA:** reset menghapus **semuanya**: produk, seluruh transaksi, nama toko, logo, **dan PIN**. Aplikasi kembali ke layar pendaftaran awal. **Tidak bisa dibatalkan.** Tidak ada data contoh/demo yang diisi ulang. Teks konfirmasinya hanya menyebut produk dan transaksi, padahal PIN dan profil juga ikut terhapus.
 
-Sebuah produk dianggap **menipis** jika `stok ≤ minimum stok alert`. Pemberitahuan muncul di:
+Tombol Reset tidak terlihat pada tampilan HP yang sempit.
 
-- Lencana merah pada menu Notifikasi,
-- Banner di Dashboard,
-- Halaman **Notifikasi** (dengan tombol **Restock** yang membuka form Barang Masuk).
+**Lupa PIN:** tidak ada fitur pemulihan, dan tombol Reset hanya bisa dicapai setelah login. Satu-satunya jalan yang diketahui adalah menghapus data situs/aplikasi lewat pengaturan browser, yang **menghapus semua data toko**. Karena itu catat PIN di tempat aman.
 
-Tombol **Bersihkan** hanya mengosongkan tampilan daftar untuk sementara. Daftar muncul lagi saat ada perubahan data atau aplikasi dibuka ulang, dan lencana tidak ikut hilang.
+## 11. Contoh alur kerja harian
 
-Anda bisa mengatur batas per produk lewat **Min. Alert** (saat barang masuk) atau **Minimum Stok Alert** (saat edit produk).
+**Pagi:** masuk dengan PIN → lihat Dashboard dan Notifikasi → barang menipis? Tekan **Restock**.
+**Barang datang dari supplier:** Transaksi → Barang Masuk → isi nama, harga beli/jual, jumlah.
+**Saat ada pembeli:** Transaksi → Penjualan Produk → pilih produk → isi jumlah → simpan.
+**Barang rusak/kadaluarsa:** Transaksi → Penyesuaian Stok → pilih alasan.
+**Malam:** buka Laporan, lihat omset dan produk terlaris, lalu **Keluar Toko**.
 
-## 11. Mengubah nama toko dan logo
+## 12. Tips agar data aman
 
-1. Tekan ikon pensil di kartu toko (sidebar), ikon toko di bagian atas (HP), atau ikon pensil di banner Dashboard.
-2. Ubah **Nama Toko / Usaha UMKM**.
-3. Opsional: isi **Link URL Logo** dengan alamat gambar di internet (contoh: `https://contoh.com/gambar.png`). Kosongkan untuk memakai logo bawaan.
-4. Tekan **Simpan**.
-
-ID Toko **tidak bisa** diubah dari sini. Mengubahnya sama dengan membuat toko baru yang datanya kosong.
-
-## 12. Reset data demo
-
-Hanya tersedia di tampilan layar lebar: tombol **Reset Data Demo** di sidebar.
-
-> ## ⚠️ Peringatan: tindakan ini menghapus data
->
-> Reset **mengganti seluruh produk dan seluruh transaksi** toko yang sedang aktif dengan data contoh, dan mengembalikan nama toko ke nama bawaan (*Toko Berkah Utama*). **Data asli Anda hilang dan tidak bisa dikembalikan.**
->
-> Gunakan hanya untuk mencoba aplikasi, jangan pada toko yang sudah berisi data nyata.
-
-Langkah: tekan **Reset Data Demo**, baca pesan, lalu **Ya, Lanjutkan** (atau **Batal**).
-
-## 13. Keluar dari toko
-
-Tekan **Keluar Toko** (sidebar) atau ikon keluar (HP), lalu **Ya, Lanjutkan**. Data **tidak dihapus**. Anda hanya kembali ke layar masuk. Masuk lagi dengan ID Toko yang sama akan membuka data yang sama.
-
-## 14. Contoh alur kerja harian
-
-**Pagi**
-1. Buka NataData lalu lihat Dashboard. Periksa banner **Stok Menipis**.
-2. Jika ada barang tiba dari supplier, catat lewat **Barang Masuk**.
-
-**Siang dan sore**
-3. Setiap ada penjualan, catat lewat **Penjualan Produk**. Boleh dikumpulkan lalu dicatat sekaligus, asalkan dilakukan di hari yang sama agar grafik harian benar.
-
-**Malam**
-4. Cek **Dashboard** untuk omset dan laba hari ini.
-5. Jika ada barang rusak atau dipakai sendiri, catat lewat **Penyesuaian Stok**.
-6. Cocokkan stok di aplikasi dengan stok di rak untuk beberapa barang. Jika selisih, catat lewat **Koreksi Selisih Stok Audit**.
-7. Catat angka penting di buku sebagai cadangan.
+- Pakai **satu perangkat dan satu browser** yang sama setiap hari. Browser berbeda = data berbeda.
+- Jangan memakai mode penyamaran/private dan jangan menghapus "data situs".
+- Catat PIN. Bila perlu, foto/catat ringkasan laporan secara berkala sebagai cadangan manual karena belum ada ekspor.

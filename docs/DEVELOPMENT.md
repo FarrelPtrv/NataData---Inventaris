@@ -2,144 +2,129 @@
 
 Untuk pengembang yang ingin menjalankan dan memodifikasi NataData.
 
-## 1. Perangkat yang dibutuhkan
+> **Fakta kondisi aktual:** saat audit, repository `FarrelPtrv/NataData---Inventaris` **kosong** dan belum ada `package.json`. Karena itu belum ada versi Node.js/npm "resmi" proyek, dan belum ada perintah `npm run ...` yang bisa dikutip. Dokumen ini hanya memuat perintah yang berlaku untuk struktur yang ada (satu file HTML) dan untuk rencana Tauri. Perintah Tauri belum dijalankan terhadap proyek ini.
 
-| Perangkat | Wajib? | Keterangan |
+## 1. Perangkat lunak yang dibutuhkan
+
+| Kebutuhan | Wajib untuk | Keterangan |
 |---|---|---|
-| Browser modern | Ya | Chrome / Edge / Firefox / Safari |
-| Editor teks | Ya | Misalnya VS Code |
-| Git | Untuk berbagi kode | [git-scm.com](https://git-scm.com) |
-| Internet | Ya | Tailwind, Lucide, Chart.js, dan font dimuat dari CDN |
-| Python 3 atau Node.js | Opsional | Hanya untuk server lokal atau pemeriksaan sintaks |
+| Browser modern + DevTools | Semua | Chrome/Edge/Firefox |
+| Git | Semua | Clone dan commit |
+| Editor kode | Semua | Contoh: VS Code |
+| Node.js (LTS) + npm | Server lokal, Tauri CLI | Versi belum dikunci proyek. Pakai LTS terbaru dari nodejs.org |
+| Rust (via rustup) + build tools OS | Tauri saja | Lihat [TAURI_BUILD.md](TAURI_BUILD.md) |
+| Koneksi internet | Semua | Tailwind, Lucide, Chart.js dimuat dari CDN |
 
-**Versi Node.js dan npm:** repository ini **tidak memiliki `package.json`**, jadi tidak ada versi yang diwajibkan dan tidak ada perintah `npm install`. Versi Node baru relevan jika kelak Anda menambahkan Capacitor (lihat [ANDROID_BUILD.md](ANDROID_BUILD.md)).
+Periksa instalasi:
 
-## 2. Mengambil kode
+```bash
+git --version
+node -v
+npm -v
+```
+
+## 2. Clone repository
 
 ```bash
 git clone https://github.com/FarrelPtrv/NataData---Inventaris.git
 cd NataData---Inventaris
 ```
 
+Jika repository masih kosong, salin `index.html`, `logo.jpeg`, dan folder `img/` ke dalamnya, lalu commit pertama (lihat [DEPLOYMENT.md](DEPLOYMENT.md)).
+
 ## 3. Memasang dependensi
 
-Tidak ada langkah ini. Semua pustaka dimuat dari CDN saat halaman dibuka.
+Aplikasi web **tidak punya dependensi npm**; semua pustaka dimuat dari CDN. Tidak ada `npm install` yang diperlukan sampai Tauri ditambahkan.
 
 ## 4. Menjalankan aplikasi
 
-**Cara 1:** klik dua kali `index.html`.
+Pilihan A, buka langsung `index.html` di browser (klik ganda).
 
-**Cara 2 (disarankan):** server statis lokal, agar perilakunya mirip hosting sebenarnya.
+Pilihan B, server lokal (disarankan):
 
 ```bash
-python3 -m http.server 8000
-# lalu buka http://localhost:8000
+npx serve .                   # unduh otomatis paket "serve" saat dijalankan
+# atau, bila Python terpasang:
+python -m http.server 8080
 ```
 
-Tidak ada perintah `npm start` atau `npm run build` karena tidak ada `package.json`.
+Penting: `localStorage` terikat pada **origin** (`file://`, `http://localhost:3000`, `http://localhost:8080` semuanya berbeda). Gunakan satu cara yang konsisten saat menguji.
 
-## 5. Mengubah kode
+Menjalankan sebagai aplikasi desktop: `npx tauri dev` (setelah mengikuti [TAURI_BUILD.md](TAURI_BUILD.md)).
 
-Seluruh aplikasi ada di `index.html`. Lihat peta fungsi di [ARCHITECTURE.md](ARCHITECTURE.md#3-peta-fungsi).
+## 5. Perintah build
 
-Pola yang dipakai di kode ini:
+Tidak ada langkah build untuk versi web (file statis). Untuk aplikasi desktop:
 
-1. Fungsi `handle...` membaca form, memvalidasi, mengubah `items` / `transactions`.
-2. Memanggil `saveDataToStorage()`.
-3. Memanggil fungsi render: `updateDashboard()`, `renderStokList()`, `populateSelectOptions()`, `renderTransactionHistory()`, `renderNotifications()`, `updateCharts()`.
+```bash
+npx tauri build
+```
 
-Jika Anda menambah jenis perubahan data, ingat memanggil seluruh fungsi di langkah 3, atau tampilan akan tidak konsisten.
+Tidak ada skrip `npm run build` karena `package.json` belum ada. Jangan mengarang skrip tersebut sebelum benar-benar ditambahkan.
 
-**Catatan nama lama:** kunci `localStorage` berawalan `stokin_`. Jangan diganti tanpa migrasi data, karena data pengguna yang sudah ada akan tampak hilang.
+## 6. Cara memodifikasi
 
-## 6. Menguji perubahan
+Seluruh kode ada di `index.html`:
 
-Belum ada pengujian otomatis. Gunakan daftar periksa manual ini.
+| Ingin mengubah | Cari di |
+|---|---|
+| Tampilan layar | Bagian HTML (`<body>`), kelas Tailwind |
+| Logika | Tag `<script>` pada bagian bawah |
+| Nama toko bawaan, logo bawaan | Konstanta `DEFAULT_STORE_NAME`, `DEFAULT_LOGO` |
+| Kategori produk | Dua `<select>` kategori (form Barang Masuk dan modal Edit), tombol filter, dan objek `catCounts` di `updateCharts` |
+| Alasan pengurangan stok | `<select id="alasanKeluar">` |
+
+Prinsip saat mengubah kode:
+1. Setiap perubahan data harus memanggil `saveDataToStorage()`.
+2. Setelah mengubah data, panggil fungsi render terkait (`updateDashboard`, `renderStokList`, `renderTransactionHistory`, `renderNotifications`, `updateCharts`).
+3. Teks dari pengguna yang dimasukkan ke `innerHTML` harus lewat `escapeHTML()`.
+4. Jika menambah kategori, ubah **semua** tempat yang disebut di tabel di atas, karena kategori ditulis berulang (hard-coded).
+
+## 7. Menguji perubahan
+
+Belum ada pengujian otomatis. Gunakan daftar uji manual berikut setelah setiap perubahan:
 
 | # | Skenario | Hasil yang diharapkan |
 |---|---|---|
-| 1 | Masuk dengan ID baru | 4 produk dan 3 transaksi contoh muncul |
-| 2 | Jual produk dengan `qty` ≤ stok | Stok turun, transaksi muncul, dashboard berubah |
-| 3 | Jual dengan `qty` > stok | Toast error, tidak ada perubahan |
-| 4 | Barang masuk dengan nama yang sudah ada | Stok bertambah, tidak ada produk ganda |
-| 5 | Penyesuaian stok | Stok turun, transaksi bertipe Pengurangan |
-| 6 | Stok ≤ minimum | Lencana, banner, dan daftar notifikasi muncul |
-| 7 | Muat ulang halaman | Data tetap ada, masuk otomatis |
-| 8 | Keluar lalu masuk lagi tanpa memuat ulang halaman | Periksa Console. Ada dugaan error grafik (lihat [AUDIT.md](AUDIT.md), temuan T-03) |
-| 9 | Reset data (layar lebar) | Kembali ke data contoh |
-| 10 | Ukuran layar HP dan laptop | Sidebar vs bottom nav tampil benar |
+| 1 | Pertama kali buka (data bersih) | Muncul "Buat Profil Toko" |
+| 2 | PIN 5 angka / konfirmasi berbeda | Ditolak dengan pesan |
+| 3 | Barang masuk produk baru | Muncul di Stok; riwayat bertambah; modal di Laporan naik |
+| 4 | Barang masuk dengan nama sama | Stok bertambah, tidak ada duplikat produk |
+| 5 | Penjualan melebihi stok | Ditolak |
+| 6 | Penjualan sah | Stok turun, omset dan laba naik |
+| 7 | Stok ≤ minimum | Muncul di Notifikasi dan banner dashboard |
+| 8 | Pengurangan dengan alasan "Lainnya" | Alasan kustom tercatat |
+| 9 | Muat ulang halaman | Data tetap ada |
+| 10 | Keluar lalu masuk dengan PIN | Data tetap ada |
+| 11 | Reset | Semua data dan PIN hilang |
+| 12 | Nama produk berisi `<b>x</b>` | Tampil sebagai teks, bukan HTML |
+| 13 | Lebar layar HP dan desktop | Navigasi bawah (HP) / sidebar (desktop) benar |
 
-## 7. Memeriksa kesalahan JavaScript
+Untuk menyiapkan kondisi bersih: DevTools → Application → Local Storage → hapus kunci berawalan `natadata_`.
 
-**Di browser:** buka Developer Tools (F12), tab **Console** untuk error, tab **Application → Local Storage** untuk melihat data (kunci `stokin_...`).
+## 8. Memeriksa kesalahan JavaScript
 
-**Memeriksa sintaks tanpa browser** (butuh Python 3 dan Node.js). Ini yang dipakai saat audit, dan hasilnya valid:
-
-```bash
-python3 - <<'EOF'
-import re
-s = open('index.html', encoding='utf-8').read()
-open('/tmp/inline.js', 'w').write(re.findall(r'<script>(.*?)</script>', s, re.S)[0])
-EOF
-node --check /tmp/inline.js && echo "Sintaks OK"
-```
-
-Ini hanya memeriksa sintaks, **bukan** perilaku aplikasi.
-
-**Menghapus data uji:** di Console jalankan `localStorage.clear()` lalu muat ulang. Ini menghapus semua data situs tersebut.
-
-## 8. Masalah umum
-
-Lihat [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
-
-## 9. Mengunggah (push) ke GitHub
-
-Repository `FarrelPtrv/NataData---Inventaris` pernah terlihat kosong. Langkah berikut untuk push pertama dari komputer Anda.
-
-**a. Siapkan identitas dan login (sekali saja)**
+1. Buka DevTools (F12) → tab **Console**. Galat merah menunjukkan baris dan fungsi.
+2. Tab **Network**: pastikan `cdn.tailwindcss.com`, `unpkg.com/lucide`, dan `cdn.jsdelivr.net/npm/chart.js` berstatus 200.
+3. Tab **Application → Local Storage**: lihat nilai kunci `natadata_*`.
+4. Pemeriksaan sintaks tanpa browser, dari terminal (butuh Node.js). Salin isi tag `<script>` ke `app.js`, lalu jalankan:
 
 ```bash
-git config --global user.name "Nama Anda"
-git config --global user.email "email-akun-github@contoh.com"
+node --check app.js
 ```
 
-Login GitHub lewat GitHub Desktop atau `gh auth login` (GitHub CLI). **Jangan menempelkan token atau kata sandi ke dokumen, chat, atau kode.**
+Pada audit ini, pemeriksaan sintaks terhadap skrip dilakukan dan **lolos** (hanya pemeriksaan sintaks, bukan pengujian fungsi).
 
-**b. Susun folder proyek** agar berisi: `index.html`, `logo.jpeg` (jika ada), `README.md`, `.gitignore`, folder `docs/`, dan folder `.github/workflows/`.
+Pada aplikasi Tauri, DevTools bisa dibuka dengan klik kanan → Inspect saat `npx tauri dev` (perilaku pada build rilis belum diverifikasi).
 
-> Folder berawalan titik (`.github`) sering tidak terunggah jika Anda memakai tombol *Upload files* di web GitHub. Gunakan Git dari terminal.
+## 9. Masalah umum saat pengembangan
 
-**c. Push**
+| Gejala | Kemungkinan penyebab | Tindakan |
+|---|---|---|
+| Layar tanpa gaya | Tailwind CDN gagal dimuat | Cek internet dan tab Network |
+| Ikon kosong | Lucide gagal dimuat | Cek Network; `lucide.createIcons()` dipanggil bila `window.lucide` ada |
+| Laporan error `Chart is not defined` | Chart.js gagal dimuat | Cek Network |
+| Data "hilang" setelah ganti cara membuka | Origin berbeda | Gunakan satu alamat konsisten |
+| Logo tidak tampil | Jalur `logo.jpeg` / `img/logo.jpeg` salah | Lihat [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
 
-```bash
-cd folder-proyek-anda
-git init
-git add .
-git status                # pastikan .github/workflows/pages.yml ikut terdaftar
-git commit -m "Tambah NataData dan dokumentasi"
-git branch -M main
-git remote add origin https://github.com/FarrelPtrv/NataData---Inventaris.git
-git push -u origin main
-```
-
-**d. Jika ingin ditinjau dulu lewat branch dan Pull Request**
-
-```bash
-git checkout -b docs/natadata-documentation
-git push -u origin docs/natadata-documentation
-```
-
-Lalu buka GitHub dan buat Pull Request ke `main`.
-
-**e. Jika push ditolak (`rejected`)** karena repository sudah berisi file lain:
-
-```bash
-git pull --rebase origin main
-git push -u origin main
-```
-
-## 10. Konvensi yang disarankan
-
-- Tulis teks antarmuka dalam bahasa Indonesia, sesuai yang sudah ada.
-- Jangan mengganti nama variabel atau kunci penyimpanan hanya karena perubahan merek.
-- Setiap perubahan perilaku: perbarui [USER_GUIDE.md](USER_GUIDE.md) dan [ARCHITECTURE.md](ARCHITECTURE.md).
+Masalah lain: [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
