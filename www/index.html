@@ -1694,7 +1694,13 @@
                         },
                         scales: {
                             y: {
-                                ticks: { callback: value => 'Rp ' + (value/1000) + 'k', font: { size: 10 } },
+                                min: 0,
+                                max: 250000,
+                                ticks: {
+                                    stepSize: 50000,
+                                    callback: value => 'Rp ' + value.toLocaleString('id-ID'),
+                                    font: { size: 10 }
+                                },
                                 grid: { borderDash: [2, 2], color: '#f1f5f9' }
                             },
                             x: { ticks: { font: { size: 10, weight: 'bold' } }, grid: { display: false } }
@@ -1791,6 +1797,10 @@
                     dailyTotals.push(daySales);
                 }
 
+                const maxSales = Math.max(...dailyTotals, 0);
+                const dynamicMax = Math.max(250000, Math.ceil(maxSales / 50000) * 50000);
+
+                salesChartInstance.options.scales.y.max = dynamicMax;
                 salesChartInstance.data.labels = labels;
                 salesChartInstance.data.datasets[0].data = dailyTotals;
                 salesChartInstance.update();
