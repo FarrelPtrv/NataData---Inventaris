@@ -1,128 +1,200 @@
 # NataData
 
-**Aplikasi pencatat stok barang dan penjualan untuk UMKM.** Catat barang masuk, penjualan, dan pengurangan stok, lalu lihat ringkasan, laporan, dan peringatan stok menipis, semuanya dari satu aplikasi yang ringan.
+<p align="center">
+  <img src="www/logo.jpeg" alt="NataData Logo" width="120" style="border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</p>
 
-![Versi](https://img.shields.io/badge/versi-1.0.0-blue)
-![Platform](https://img.shields.io/badge/platform-Windows%2064--bit-lightgrey)
-![Status](https://img.shields.io/badge/status-prototipe-orange)
+<p align="center">
+  <strong>Aplikasi Pencatat Stok Barang dan Penjualan Sederhana untuk Pelaku UMKM</strong><br>
+  Ringan, cepat, mandiri (100% offline), dan mudah digunakan di perangkat desktop maupun browser.
+</p>
 
-> **Status: prototipe.** NataData cocok untuk dicoba dan untuk pemakaian sederhana di satu perangkat. Data tersimpan **hanya di komputer Anda** dan belum ada fitur cadangan. Baca [Hal yang perlu diketahui](#hal-yang-perlu-diketahui) sebelum dipakai untuk data toko yang penting.
+<p align="center">
+  <a href="#fitur-utama"><img src="https://img.shields.io/badge/versi-1.0.0-emerald?style=flat-square" alt="Versi 1.0.0"></a>
+  <a href="#dukungan-platform"><img src="https://img.shields.io/badge/platform-Windows%20%7C%20Web%20%7C%20Android%20(CI)-blue?style=flat-square" alt="Platform"></a>
+  <a href="#arsitektur-teknologi"><img src="https://img.shields.io/badge/engine-Tauri%20v2%20%2B%20HTML5-indigo?style=flat-square" alt="Tauri v2"></a>
+  <a href="#mode-offline-penuh"><img src="https://img.shields.io/badge/offline-100%25%20ready-success?style=flat-square" alt="Offline Ready"></a>
+</p>
 
-<!-- Tambahkan tangkapan layar di sini setelah berkas gambarnya ada di repository:
-![Dashboard NataData](docs/images/dashboard.png)
--->
+---
 
-## Daftar isi
+## Daftar Isi
 
-- [Unduh](#unduh)
-- [Cara memasang](#cara-memasang)
-- [Fitur](#fitur)
-- [Mulai memakai](#mulai-memakai)
-- [Hal yang perlu diketahui](#hal-yang-perlu-diketahui)
-- [Dokumentasi](#dokumentasi)
-- [Untuk pengembang](#untuk-pengembang)
-- [Lisensi](#lisensi)
+1. [Tentang NataData](#tentang-natadata)
+2. [Fitur Utama](#fitur-utama)
+3. [Dukungan Platform](#dukungan-platform)
+4. [Struktur Direktori](#struktur-direktori)
+5. [Panduan Penggunaan Lokal](#panduan-penggunaan-lokal)
+   - [A. Menjalankan di Browser](#a-menjalankan-langsung-di-browser-web)
+   - [B. Menjalankan Mode Desktop (Tauri)](#b-menjalankan-sebagai-aplikasi-desktop-tauri)
+   - [C. Membangun Installer Desktop](#c-membangun-installer-desktop-windows)
+6. [Fitur Baru & Pembaruan Terkini](#fitur-baru--pembaruan-terkini)
+7. [Hal yang Perlu Diketahui](#hal-yang-perlu-diketahui)
+8. [Indeks Dokumentasi](#indeks-dokumentasi)
+9. [Lisensi & Kontribusi](#lisensi--kontribusi)
 
-## Unduh
+---
 
-**[⬇ Unduh versi terbaru dari halaman Releases](https://github.com/FarrelPtrv/NataData---Inventaris/releases/latest)**
+## Tentang NataData
 
-| | |
-|---|---|
-| Berkas | `natadata_1_0_0_x64-setup.exe` (pemasang Windows) |
-| Versi | 1.0.0 |
-| Platform | Windows 64-bit (x64) |
-| Ukuran | sekitar 1,9 MB |
-| SHA-256 | `a9b91409abc5bc3798ec871837cb963962e48e9781a9c9b9dd4b048defca8956` |
+Banyak pelaku UMKM masih mencatat keluar-masuk barang di buku catatan fisik atau pesan obrolan, sehingga sering terjadi ketidaksesuaian stok, sulit mengetahui barang yang menipis, dan kesulitan menghitung estimasi keuntungan harian.
 
-- Versi Windows minimum belum diuji. Aplikasi memerlukan **Microsoft Edge WebView2**, yang umumnya sudah ada di Windows 10 (pembaruan terbaru) dan Windows 11.
-- Versi **Android (APK)**, **macOS**, dan **Linux** belum tersedia.
-- Aplikasi **membutuhkan koneksi internet** agar tampilan, ikon, dan grafik termuat.
+**NataData** hadir sebagai solusi sistem pencatatan digital yang:
+* **Tidak Memerlukan Server Khusus:** Berjalan langsung di komputer pengguna dengan data tersimpan di penyimpanan lokal (*local storage*).
+* **Bisa Berjalan 100% Offline:** Pustaka antarmuka, ikon, dan grafik telah dibundel secara lokal sehingga tidak membutuhkan koneksi internet saat dioperasikan.
+* **Aman dengan Cadangan Data:** Dilengkapi fitur ekspor dan impor file cadangan JSON sekali klik untuk mencegah kehilangan data.
 
-### Memeriksa keaslian berkas (opsional)
+---
 
-Pastikan berkas yang Anda unduh sama dengan yang diterbitkan. Di PowerShell:
+## Fitur Utama
 
-```powershell
-Get-FileHash .\natadata_1_0_0_x64-setup.exe -Algorithm SHA256
+- 📊 **Dashboard Interaktif:** Ringkasan jumlah produk, peringatan stok menipis, total penjualan hari ini, dan estimasi laba kotor.
+- 📦 **Manajemen Stok Barang:** Pencarian cepat, filter kategori (*Makanan, Minuman, Sembako, Lainnya*), ubah data produk, dan hapus barang.
+- 📥 **Pencatatan Barang Masuk:** Tambah barang baru (lengkap dengan SKU otomatis, satuan, harga beli, dan harga jual) atau restock produk yang sudah terdaftar.
+- 🛒 **Pencatatan Penjualan:** Penjualan langsung dengan validasi stok otomatis (menolak transaksi jika stok tidak mencukupi) dan penghitungan laba otomatis.
+- 📉 **Penyesuaian Stok Beralasan:** Pengurangan stok dengan kategori alasan jelas (*Rusak, Kadaluarsa, Pemakaian Sendiri, Hilang, atau Koreksi Lainnya*).
+- ↩️ **Pembatalan Transaksi (*Void Transaction*):** Batalkan transaksi penjualan atau barang masuk yang keliru dengan **otomatisasi pengembalian stok barang** ke kondisi semula.
+- 💾 **Cadangan & Pemulihan Data (Ekspor / Impor JSON):** Unduh seluruh data bisnis ke file JSON dan pulihkan kapan saja di perangkat lain.
+- 📈 **Laporan & Analitik Keuangan:** Rekapitulasi omset, laba, modal masuk, arus kas sederhana, produk terlaris, bar chart penjualan 7 hari terakhir, dan diagram komposisi kategori stok.
+- 🔔 **Peringatan Stok Menipis:** Notifikasi otomatis saat stok barang mencapai atau berada di bawah batas minimum alert.
+- 🔒 **Kunci Tampilan PIN 6-Digit:** Kunci sesi cepat untuk melindungi privasi tampilan kasir, serta kemudahan kustomisasi nama dan logo toko.
+
+---
+
+## Dukungan Platform
+
+| Platform | Status | Keterangan |
+|---|---|---|
+| **Windows Desktop (x64)** | ✅ Siap Pakai | Dibungkus menggunakan Tauri v2 (berkas `.exe` / installer MSI). Memerlukan WebView2. |
+| **Web Browser (Chrome/Edge/Firefox)** | ✅ Siap Pakai | Berjalan murni langsung dari file `www/index.html` tanpa build step. |
+| **Android (APK)** | 🟡 Workflow Tersedia | Konfigurasi Capacitor & GitHub Actions workflow (`.github/workflows/build-android.yml`) tersedia. |
+| **macOS & Linux** | 🟡 Kompatibel | Dapat dikompilasi menggunakan Tauri CLI pada lingkungan OS masing-masing. |
+
+---
+
+## Struktur Direktori
+
+```text
+NataData---Inventaris/
+├── .github/
+│   └── workflows/              # Otomatisasi build CI/CD (Desktop & Android APK)
+│       ├── build-desktop.yml
+│       └── build-android.yml
+├── docs/                       # Dokumentasi lengkap proyek
+│   ├── ARCHITECTURE.md         # Desain arsitektur sistem & model data
+│   ├── AUDIT_DAN_REKOMENDASI.md# Audit analisis kode & rekomendasi
+│   ├── DEVELOPMENT.md          # Panduan pengembangan & daftar pengujian
+│   ├── TAURI_BUILD.md          # Panduan kompilasi Tauri desktop
+│   ├── USER_GUIDE.md           # Panduan pengguna langkah-demi-langkah
+│   └── TROUBLESHOOTING.md      # Pemecahan masalah teknis
+├── src-tauri/                  # Backend & konfigurasi Tauri Desktop (Rust)
+│   ├── Cargo.toml
+│   ├── tauri.conf.json         # Konfigurasi jendela & bundle Tauri v2
+│   ├── icons/                  # Aset ikon desktop (.ico, .icns, .png)
+│   └── src/                    # Entry point Rust (main.rs, lib.rs)
+├── www/                        # Frontend Web (HTML, CSS, JS, Assets)
+│   ├── index.html              # Aplikasi utama NataData
+│   ├── logo.jpeg               # Aset logo bawaan aplikasi
+│   ├── assets/                 # Aset grafis pendukung (SVG logo)
+│   └── vendor/                 # Pustaka mandiri (100% offline)
+│       ├── tailwind.js         # Tailwind CSS engine lokal
+│       ├── lucide.min.js       # Pustaka ikon Lucide lokal
+│       └── chart.umd.min.js    # Pustaka grafik Chart.js lokal
+├── capacitor.config.ts         # Konfigurasi pembungkus Android Capacitor
+├── package.json
+└── README.md
 ```
 
-Hasilnya harus sama dengan nilai SHA-256 di atas. Jika berbeda, jangan dipasang.
+---
 
-## Cara memasang
+## Panduan Penggunaan Lokal
 
-1. Unduh `natadata_1_0_0_x64-setup.exe` dari halaman [Releases](https://github.com/FarrelPtrv/NataData---Inventaris/releases/latest).
-2. Klik ganda berkas itu dan ikuti petunjuk pemasang.
-3. Buka **NataData** dari Start Menu atau pintasan desktop.
+### A. Menjalankan Langsung di Browser Web
+Cara tercepat untuk mencoba atau memakai aplikasi tanpa instalasi alat pengembangan:
+1. Masuk ke folder `www/`.
+2. Klik dua kali pada file `index.html` (atau klik kanan $\rightarrow$ *Open with* Chrome / Microsoft Edge / Firefox).
+3. Aplikasi langsung terbuka dan siap digunakan secara penuh.
 
-**Jika Windows menampilkan peringatan "Windows protected your PC" (SmartScreen):** pemasang ini kemungkinan belum ditandatangani sertifikat penerbit, sehingga Windows memperingatkan. Jika Anda mengunduh langsung dari halaman Releases repository ini dan checksum-nya cocok, pilih **More info → Run anyway**. Jangan lanjutkan bila berkas berasal dari sumber lain. *(Perilaku persis belum diuji.)*
-
-**Mencopot:** Settings → Apps → Installed apps → NataData → Uninstall. Apakah data toko ikut terhapus saat dicopot **belum diverifikasi**, jadi catat data penting lebih dulu.
-
-## Fitur
-
-- **Dashboard:** jumlah produk, stok menipis, penjualan hari ini, dan estimasi laba kotor.
-- **Stok:** daftar barang dengan pencarian, filter kategori (Makanan, Minuman, Sembako, Lainnya), ubah, dan hapus.
-- **Barang masuk:** tambah barang baru atau tambah stok barang lama, lengkap dengan harga modal dan harga jual.
-- **Penjualan:** catat penjualan, stok berkurang otomatis, dan laba terhitung.
-- **Penyesuaian stok:** kurangi stok karena rusak, kadaluarsa, pemakaian sendiri, hilang, atau koreksi.
-- **Riwayat transaksi:** seluruh aktivitas tercatat berurutan.
-- **Laporan:** omset, laba, modal, arus kas sederhana, produk terlaris, grafik penjualan 7 hari, dan komposisi stok.
-- **Notifikasi:** peringatan saat stok mencapai batas minimum.
-- **PIN 6 angka** untuk mengunci tampilan, serta pengaturan nama dan logo toko.
-
-Penjelasan rinci tiap fitur: [Panduan Pengguna](docs/USER_GUIDE.md).
-
-## Mulai memakai
-
-1. Buka NataData, isi **Nama Toko**, lalu buat **PIN 6 angka** dan catat PIN-nya.
-2. Buka **Transaksi → Barang Masuk** untuk menambahkan barang pertama.
-3. Catat penjualan di **Transaksi → Penjualan Produk**.
-4. Pantau **Dashboard**, **Laporan**, dan **Notifikasi**.
-
-## Hal yang perlu diketahui
-
-| Hal | Penjelasan |
-|---|---|
-| **Data hanya di komputer ini** | Data disimpan di dalam aplikasi pada komputer yang Anda pakai. Tidak tersinkron ke komputer atau HP lain |
-| **Belum ada cadangan/ekspor** | Jika data aplikasi terhapus atau Reset dijalankan, data tidak dapat dipulihkan |
-| **PIN bukan pengaman data** | PIN hanya mengunci tampilan dan tersimpan sebagai teks biasa di aplikasi. Jangan anggap data terlindungi dari orang yang memegang komputer Anda |
-| **Lupa PIN tidak bisa dipulihkan** | Satu-satunya jalan menghapus seluruh data aplikasi. Catat PIN di tempat aman |
-| **Tombol Reset menghapus semuanya** | Termasuk produk, transaksi, nama toko, dan PIN. Tidak bisa dibatalkan |
-| **Perlu internet** | Pustaka tampilan dimuat dari internet saat aplikasi dibuka |
-| **Satu toko, satu pengguna** | Belum ada akun, peran, atau banyak toko |
-
-Daftar lengkap keterbatasan dan rekomendasi pengembangan: [Audit dan Rekomendasi](docs/AUDIT_DAN_REKOMENDASI.md).
-
-## Dokumentasi
-
-| Dokumen | Untuk siapa | Isi |
-|---|---|---|
-| [Panduan Pengguna](docs/USER_GUIDE.md) | Pemilik toko | Cara memakai setiap fitur, contoh alur harian |
-| [Pemecahan Masalah](docs/TROUBLESHOOTING.md) | Semua | Gejala, penyebab, dan perbaikan |
-| [Arsitektur](docs/ARCHITECTURE.md) | Pengembang | Struktur aplikasi, model data, alur transaksi |
-| [Panduan Pengembangan](docs/DEVELOPMENT.md) | Pengembang | Menjalankan, memodifikasi, dan menguji |
-| [Membangun Aplikasi Desktop (Tauri)](docs/TAURI_BUILD.md) | Pengembang | Lingkungan, konfigurasi, dan build installer |
-| [Membangun APK Android (Tauri)](docs/ANDROID_BUILD.md) | Pengembang | Persiapan Android dan pembuatan APK (belum diuji) |
-| [Deployment](docs/DEPLOYMENT.md) | Pengembang | Website GitHub Pages dan rilis lewat GitHub Actions |
-| [Audit dan Rekomendasi](docs/AUDIT_DAN_REKOMENDASI.md) | Pengembang | Temuan teknis dan prioritas perbaikan |
-
-## Untuk pengembang
-
-NataData adalah satu halaman web (HTML + JavaScript, tanpa framework) yang menyimpan data di `localStorage`, dibungkus **Tauri v2** menjadi aplikasi desktop. Aset web ada di folder `www/`.
-
-Persyaratan: Node.js 22.12.0 atau lebih baru, Rust, dan (di Windows) Microsoft C++ Build Tools serta WebView2.
-
+Atau jalankan melalui local server jika diinginkan:
 ```bash
+npx serve www
+# atau dengan python
+python -m http.server 8000 --directory www
+```
+
+### B. Menjalankan sebagai Aplikasi Desktop (Tauri)
+**Prasyarat:**
+- [Node.js](https://nodejs.org/) (versi LTS $\ge$ 20.x atau 22.x)
+- [Rust & Cargo](https://rustup.rs/)
+- Di Windows: C++ Build Tools (via Visual Studio Installer) dan Microsoft Edge WebView2.
+
+**Langkah Menjalankan:**
+```bash
+# 1. Clone repository
 git clone https://github.com/FarrelPtrv/NataData---Inventaris.git
 cd NataData---Inventaris
+
+# 2. Pasang dependensi
 npm install
-npm run tauri dev      # jalankan sebagai aplikasi desktop
-npm run tauri build    # buat installer
+
+# 3. Jalankan aplikasi desktop dalam mode development
+npm run tauri dev
 ```
 
-Installer hasil build umumnya berada di `src-tauri/target/release/bundle/`. Langkah lengkap, termasuk pemasangan lingkungan dan masalah umum, ada di [docs/TAURI_BUILD.md](docs/TAURI_BUILD.md).
+### C. Membangun Installer Desktop Windows
+Untuk membuat berkas installer `.exe` / `.msi`:
+```bash
+npm run tauri build
+```
+Hasil installer akan terbentuk di folder:
+`src-tauri/target/release/bundle/nsis/` atau `src-tauri/target/release/bundle/msi/`.
 
-## Lisensi
+---
 
-`package.json` menyatakan `"license": "UNLICENSED"`: semua hak dilindungi pemilik proyek, dan belum ada izin untuk memakai ulang, memodifikasi, atau mendistribusikan kode. Belum ada berkas `LICENSE`. Pemilik proyek dapat menambahkannya bila ingin membuka kode sebagai open source.
+## Fitur Baru & Pembaruan Terkini
+
+Berdasarkan hasil audit sistem dan masukan pengguna, versi saat ini telah mengintegrasikan pembaruan penting:
+
+1. **Perbaikan Path Logo & Auto-Healing Storage:**
+   - Mengoreksi penautan file `DEFAULT_LOGO` ke `logo.jpeg` yang konsisten.
+   - Menyertakan mekanisme migrasi otomatis pada `localStorage` sehingga logo toko langsung tampil normal tanpa perlu reset data.
+2. **Cadangan Data Mandiri (Ekspor & Impor JSON):**
+   - Mengatasi risiko kehilangan data akibat pembersihan cache browser.
+   - Tombol ekspor dan impor tersedia di sidebar desktop dan modal pengaturan toko di tampilan layar HP.
+3. **Pembatalan Transaksi (*Void Transaction*):**
+   - Transaksi yang salah input dapat dibatalkan langsung dari daftar riwayat.
+   - Stok produk otomatis disesuaikan kembali (penjualan batal $\rightarrow$ stok kembali bertambah; barang masuk batal $\rightarrow$ stok ditarik kembali).
+   - Laba dan grafik laporan otomatis disinkronkan.
+4. **Dukungan Mode Offline Penuh:**
+   - Tailwind CSS, ikon Lucide, dan Chart.js telah dibundel secara lokal di `www/vendor/` dengan skrip fallback cerdas ke CDN.
+
+---
+
+## Hal yang Perlu Diketahui
+
+| Aspek | Penjelasan Penting |
+|---|---|
+| **Penyimpanan Lokal** | Data disimpan di `localStorage` peramban / aplikasi desktop komputer Anda. Gunakan fitur **Ekspor Cadangan (JSON)** secara berkala untuk menjaga keamanan data usaha Anda. |
+| **Satu Perangkat** | Versi ini belum menggunakan database cloud terpusat, sehingga data belum tersinkronisasi otomatis antar-perangkat. |
+| **Keamanan PIN** | PIN 6-digit berfungsi sebagai pengunci kenyamanan antarmuka (*kiosk mode / lock screen*). Catat PIN Anda di tempat aman karena belum ada fitur pemulihan lupa PIN. |
+| **Reset Data Toko** | Fitur reset akan mengosongkan seluruh data produk, transaksi, dan pengaturan toko. Pastikan telah mengekspor cadangan JSON sebelum melakukan reset. |
+
+---
+
+## Indeks Dokumentasi
+
+Pelajari lebih lanjut mengenai arsitektur, panduan teknis, dan audit sistem melalui dokumen berikut:
+
+* 📖 [**Panduan Pengguna (User Guide)**](docs/USER_GUIDE.md): Alur kerja harian pemilik toko dari input barang hingga membaca laporan.
+* 🛠️ [**Panduan Pengembangan (Development)**](docs/DEVELOPMENT.md): Panduan setup kode sumber, daftar uji coba manual, dan arsitektur fungsi.
+* 🖥️ [**Panduan Build Tauri Desktop**](docs/TAURI_BUILD.md): Rincian dependensi, konfigurasi, dan pemecahan kendala kompilasi desktop.
+* 📱 [**Panduan Build Android (Capacitor/Tauri)**](docs/ANDROID_BUILD.md): Dokumentasi persiapan lingkungan mobile dan workflow APK.
+* 🔍 [**Audit dan Rekomendasi Sistem**](docs/AUDIT_DAN_REKOMENDASI.md): Analisis statis mendalam, temuan teknis, dan roadmap jangka panjang.
+* ❓ [**Pemecahan Masalah (Troubleshooting)**](docs/TROUBLESHOOTING.md): Solusi gejala error umum, penanganan cache, dan pemulihan tampilan.
+
+---
+
+## Lisensi & Kontribusi
+
+Proyek ini dikembangkan untuk membantu operasional UMKM Indonesia.
+Seluruh hak cipta dimiliki oleh pemilik proyek ([FarrelPtrv](https://github.com/FarrelPtrv)). Untuk pertanyaan kerja sama, kontribusi perbaikan, atau pelaporan kendala teknis, silakan buka menu [Issues](https://github.com/FarrelPtrv/NataData---Inventaris/issues) pada repositori ini.
