@@ -3,71 +3,25 @@
   "version": "1.0.0",
   "description": "NataData - Aplikasi Manajemen Stok dan Penjualan UMKM",
   "private": true,
-  "main": "electron/main.cjs",
   "author": "NataData Project",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
-    "start": "electron .",
-    "dev:desktop": "electron .",
-    "build:desktop": "electron-builder --publish never",
-    "dist:win": "electron-builder --win nsis portable --x64 --publish never",
-    "dist:mac": "electron-builder --mac dmg zip --publish never",
-    "dist:linux": "electron-builder --linux AppImage deb --x64 --publish never",
-    "android:add": "cap add android",
-    "android:sync": "cap sync android",
-    "android:open": "cap open android"
-  },
-  "dependencies": {
-    "@capacitor/core": "8.6.0"
+    "tauri": "tauri"
   },
   "devDependencies": {
-    "@capacitor/android": "8.6.0",
-    "@capacitor/cli": "8.6.0",
-    "electron": "45.1.0",
-    "electron-builder": "26.18.0"
+    "@tauri-apps/cli": "^2.12.4"
   },
-  "build": {
-    "appId": "id.natadata.desktop",
-    "productName": "NataData",
-    "asar": true,
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "electron/**/*",
-      "www/**/*",
-      "package.json"
-    ],
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
-    "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ]
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    },
-    "mac": {
-      "category": "public.app-category.business",
-      "target": [
-        "dmg",
-        "zip"
-      ]
-    },
-    "linux": {
-      "category": "Office",
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    }
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FarrelPtrv/NataData---Inventaris.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/FarrelPtrv/NataData---Inventaris/issues"
+  },
+  "homepage": "https://github.com/FarrelPtrv/NataData---Inventaris#readme"
 }

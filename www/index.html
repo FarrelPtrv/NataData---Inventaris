@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NataData - Sistem Manajemen Stok & Penjualan UMKM</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Font Inter -->
+    <!-- Offline Vendor Libraries (Local) with CDN Fallback -->
+    <script src="vendor/tailwind.js"></script>
+    <script src="vendor/lucide.min.js"></script>
+    <script src="vendor/chart.umd.min.js"></script>
+    <!-- Fallback ke CDN jika berkas vendor lokal tidak ditemukan -->
+    <script>
+        if (!window.tailwind) document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+        if (!window.lucide) document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+        if (!window.Chart) document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>');
+    </script>
+    <!-- Google Font Inter with system fallbacks -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -28,7 +32,7 @@
         <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-6 border border-slate-800">
             <div class="text-center space-y-2">
                 <div class="flex justify-center mb-2">
-                    <img src="assets/natadata-logo.svg" id="authLogo" alt="NataData Logo" class="w-24 h-24 rounded-2xl shadow-sm object-contain bg-white border border-slate-100">
+                    <img src="logo.jpeg" id="authLogo" alt="NataData Logo" class="w-24 h-24 rounded-2xl shadow-sm object-contain bg-white border border-slate-100">
                 </div>
                 <h1 class="text-2xl font-bold text-slate-900" id="authTitle">Selamat Datang</h1>
                 <p class="text-xs text-slate-500">Aplikasi Manajemen Stok & Penjualan UMKM</p>
@@ -87,7 +91,7 @@
     </div>
 
     <!-- MAIN APP WRAPPER -->
-    <div id="mainApp" class="hidden h-full flex flex-col md:flex-row max-w-7xl mx-auto bg-slate-50 shadow-2xl md:my-4 md:h-[calc(100vh-2rem)] md:rounded-3xl overflow-hidden border-0 md:border border-slate-800 relative">
+    <div id="mainApp" class="hidden w-full h-screen flex flex-col md:flex-row bg-slate-50 overflow-hidden relative">
 
         <!-- Toast Notification Container -->
         <div id="toastNotification" class="fixed top-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white text-xs px-4 py-2.5 rounded-full shadow-xl z-[60] flex items-center space-x-2 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-2 border border-slate-700">
@@ -100,7 +104,7 @@
             <div class="space-y-6">
                 <!-- Logo & Toko Name -->
                 <div class="flex items-center space-x-3 px-2">
-                    <img id="sidebarLogo" src="assets/natadata-logo.svg" alt="Logo" class="w-10 h-10 rounded-xl shadow-md object-contain bg-white border border-slate-700">
+                    <img id="sidebarLogo" src="logo.jpeg" alt="Logo" class="w-10 h-10 rounded-xl shadow-md object-contain bg-white border border-slate-700">
                     <div>
                         <h1 class="font-black text-xl text-white tracking-tight">NataData</h1>
                     </div>
@@ -145,7 +149,15 @@
                 </nav>
             </div>
 
-            <div class="space-y-2 pt-4 border-t border-slate-800">
+            <div class="space-y-1.5 pt-3 border-t border-slate-800">
+                <button onclick="exportDataJSON()" class="w-full flex items-center space-x-2 text-slate-300 hover:text-emerald-400 text-xs px-3 py-2 rounded-xl hover:bg-slate-800/60 transition" title="Unduh berkas cadangan data toko">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Ekspor Cadangan (JSON)</span>
+                </button>
+                <button onclick="triggerImportJSON()" class="w-full flex items-center space-x-2 text-slate-300 hover:text-indigo-400 text-xs px-3 py-2 rounded-xl hover:bg-slate-800/60 transition" title="Pulihkan data toko dari berkas JSON">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span>Impor Cadangan (JSON)</span>
+                </button>
                 <button onclick="resetDataDefault()" class="w-full flex items-center space-x-2 text-slate-400 hover:text-amber-400 text-xs px-3 py-2 rounded-xl transition">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                     <span>Reset Data Toko</span>
@@ -164,7 +176,7 @@
             <header class="md:hidden bg-slate-900 text-white px-4 py-3 shadow-md z-10 flex justify-between items-center shrink-0">
                 <div class="flex items-center space-x-2.5">
                     <!-- Memanggil logo logo.jpeg -->
-                    <img id="headerLogo" src="assets/natadata-logo.svg" alt="Logo" class="w-9 h-9 rounded-lg shadow-sm object-contain bg-white border border-slate-700">
+                    <img id="headerLogo" src="logo.jpeg" alt="Logo" class="w-9 h-9 rounded-lg shadow-sm object-contain bg-white border border-slate-700">
                     <div>
                         <h1 class="font-bold text-base leading-tight">NataData</h1>
                         <p class="text-[10px] text-emerald-400" id="headerStoreName">Toko Berkah Utama</p>
@@ -711,11 +723,32 @@
                         <input type="text" id="inputLogoUrl" placeholder="https://contoh.com/gambar.png" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-medium">
                     </div>
 
+                    <!-- Cadangan Data & Pengaturan Tambahan (Dapat diakses juga dari HP) -->
+                    <div class="pt-2 border-t border-slate-100 space-y-2">
+                        <label class="text-[11px] font-semibold text-slate-700 block">Cadangan & Pemulihan Data</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="exportDataJSON()" class="flex items-center justify-center space-x-1.5 py-2 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-semibold transition">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Ekspor JSON</span>
+                            </button>
+                            <button type="button" onclick="triggerImportJSON()" class="flex items-center justify-center space-x-1.5 py-2 px-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold transition">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                <span>Impor JSON</span>
+                            </button>
+                        </div>
+                        <button type="button" onclick="closeModalNamaToko(); resetDataDefault();" class="w-full flex items-center justify-center space-x-1.5 py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-semibold transition">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>Reset Data Toko</span>
+                        </button>
+                    </div>
+
                     <div class="pt-2 flex space-x-2">
                         <button type="button" onclick="closeModalNamaToko()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">Batal</button>
                         <button type="submit" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md">Simpan</button>
                     </div>
                 </form>
+                <!-- Input Berkas Tersembunyi untuk Impor JSON -->
+                <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="handleFileImportJSON(event)">
             </div>
         </div>
 
@@ -742,7 +775,7 @@
     <!-- APPLICATION LOGIC SCRIPT -->
     <script>
         const DEFAULT_STORE_NAME = 'Toko Anda';
-        const DEFAULT_LOGO = 'assets/natadata-logo.svg'; 
+        const DEFAULT_LOGO = 'logo.jpeg'; 
         
         let storeName = DEFAULT_STORE_NAME;
         let storeLogo = DEFAULT_LOGO;
@@ -793,10 +826,16 @@
             const isSetup = localStorage.getItem('natadata_setup');
             const isLoggedIn = localStorage.getItem('natadata_active_session');
 
+            let savedLogo = localStorage.getItem('natadata_logo');
+            if (!savedLogo || savedLogo === 'img/logo.jpeg') {
+                savedLogo = DEFAULT_LOGO;
+                localStorage.setItem('natadata_logo', DEFAULT_LOGO);
+            }
+
             if (isSetup === 'true') {
                 // Toko sudah dibuat, ambil datanya
                 storeName = localStorage.getItem('natadata_store_name') || DEFAULT_STORE_NAME;
-                storeLogo = localStorage.getItem('natadata_logo') || DEFAULT_LOGO;
+                storeLogo = savedLogo;
                 
                 if (isLoggedIn === 'true') {
                     // Masih login, langsung buka beranda
@@ -812,6 +851,8 @@
                 }
             } else {
                 // Baru pertama kali instal / reset
+                storeLogo = DEFAULT_LOGO;
+                document.getElementById('authLogo').src = DEFAULT_LOGO;
                 document.getElementById('authScreen').classList.remove('hidden');
                 document.getElementById('formRegister').classList.remove('hidden');
                 document.getElementById('formLogin').classList.add('hidden');
@@ -874,13 +915,30 @@
 
     function loadStoreData() {
         storeName = localStorage.getItem('natadata_store_name') || DEFAULT_STORE_NAME;
-        storeLogo = localStorage.getItem('natadata_logo') || DEFAULT_LOGO;
+        let savedLogo = localStorage.getItem('natadata_logo');
+        if (!savedLogo || savedLogo === 'img/logo.jpeg') {
+            savedLogo = DEFAULT_LOGO;
+            localStorage.setItem('natadata_logo', DEFAULT_LOGO);
+        }
+        storeLogo = savedLogo;
 
-        const storedItems = localStorage.getItem('natadata_items');
-        items = storedItems ? JSON.parse(storedItems) : [];
+        try {
+            const storedItems = localStorage.getItem('natadata_items');
+            items = storedItems ? JSON.parse(storedItems) : [];
+            if (!Array.isArray(items)) items = [];
+        } catch (err) {
+            console.error('Gagal membaca data produk dari storage:', err);
+            items = [];
+        }
 
-        const storedTrx = localStorage.getItem('natadata_trx');
-        transactions = storedTrx ? JSON.parse(storedTrx) : [];
+        try {
+            const storedTrx = localStorage.getItem('natadata_trx');
+            transactions = storedTrx ? JSON.parse(storedTrx) : [];
+            if (!Array.isArray(transactions)) transactions = [];
+        } catch (err) {
+            console.error('Gagal membaca data transaksi dari storage:', err);
+            transactions = [];
+        }
 
         saveDataToStorage();
     }
@@ -915,7 +973,7 @@
 
         function resetDataDefault() {
             document.getElementById('confirmDeleteTitle').innerText = "Reset Data Toko";
-            document.getElementById('confirmDeleteText').innerText = `Yakin ingin mengosongkan seluruh data produk dan transaksi pada toko "${activeStoreId}"?`;
+            document.getElementById('confirmDeleteText').innerText = `Yakin ingin mengosongkan seluruh data produk dan transaksi pada toko "${storeName}"?`;
             document.getElementById('modalConfirmDelete').classList.remove('hidden');
             itemToDeleteId = 'RESET_ACTION';
         }
@@ -963,6 +1021,12 @@
             const headerLogoEl = document.getElementById('headerLogo');
             if (sidebarLogoEl) sidebarLogoEl.src = storeLogo;
             if (headerLogoEl) headerLogoEl.src = storeLogo;
+        }
+
+        function openModalNamaToko() {
+            document.getElementById('inputNamaToko').value = storeName;
+            document.getElementById('inputLogoUrl').value = storeLogo === DEFAULT_LOGO ? '' : storeLogo;
+            document.getElementById('modalNamaToko').classList.remove('hidden');
         }
 
         function closeModalNamaToko() {
@@ -1035,10 +1099,10 @@
             const lowStockItems = items.filter(i => i.stok <= i.minStok);
             
             const todayIsoStr = getIsoDateStr();
-            const todayPenjualan = transactions.filter(t => t.tipe === 'penjualan' && t.dateIso === todayIsoStr);
+            const todayPenjualan = transactions.filter(t => !t.isVoid && t.tipe === 'penjualan' && t.dateIso === todayIsoStr);
             const totalSalesToday = todayPenjualan.reduce((acc, curr) => acc + curr.total, 0);
 
-            const allLaba = transactions.filter(t => t.tipe === 'penjualan').reduce((acc, curr) => acc + (curr.laba || 0), 0);
+            const allLaba = transactions.filter(t => !t.isVoid && t.tipe === 'penjualan').reduce((acc, curr) => acc + (curr.laba || 0), 0);
 
             document.getElementById('dashTotalBarang').innerText = totalItems;
             document.getElementById('dashStokMenipis').innerText = lowStockItems.length;
@@ -1082,18 +1146,19 @@
 
                     const displayDate = t.timestamp ? formatDateTime(t.timestamp) : t.tglDisplay;
 
+                    const isVoided = Boolean(t.isVoid);
                     recentContainer.innerHTML += `
-                        <div class="flex justify-between items-center text-xs p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="flex justify-between items-center text-xs p-2.5 rounded-xl ${isVoided ? 'bg-slate-100/70 border-dashed opacity-60' : 'bg-slate-50'} border border-slate-100">
                             <div class="flex items-center space-x-3">
-                                <div class="p-2 rounded-lg ${badgeClass}">
-                                    <i data-lucide="${iconName}" class="w-3.5 h-3.5"></i>
+                                <div class="p-2 rounded-lg ${isVoided ? 'bg-slate-200 text-slate-400' : badgeClass}">
+                                    <i data-lucide="${isVoided ? 'ban' : iconName}" class="w-3.5 h-3.5"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-slate-800">${escapeHTML(t.itemNama)}</p>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">${displayDate}</p>
+                                    <p class="font-bold text-slate-800 ${isVoided ? 'line-through text-slate-400' : ''}">${escapeHTML(t.itemNama)}</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">${displayDate} ${isVoided ? '• (Dibatalkan)' : ''}</p>
                                 </div>
                             </div>
-                            <span class="font-extrabold ${t.tipe === 'penjualan' ? 'text-emerald-600' : (t.tipe === 'masuk' ? 'text-rose-600' : 'text-slate-600')}">
+                            <span class="font-extrabold ${isVoided ? 'line-through text-slate-400' : (t.tipe === 'penjualan' ? 'text-emerald-600' : (t.tipe === 'masuk' ? 'text-rose-600' : 'text-slate-600'))}">
                                 ${t.tipe === 'penjualan' ? '+' + formatRp(t.total) : (t.tipe === 'masuk' ? '-' + formatRp(t.total) : '')}
                             </span>
                         </div>
@@ -1288,6 +1353,41 @@
             return;
         }
 
+        if (typeof itemToDeleteId === 'string' && itemToDeleteId.startsWith('VOID_ACTION:')) {
+            const trxId = itemToDeleteId.split(':')[1];
+            const trx = transactions.find(t => t.id === trxId);
+            if (trx && !trx.isVoid) {
+                // Temukan produk untuk mengembalikan/menyesuaikan stok
+                const item = items.find(i => (trx.itemId && String(i.id) === String(trx.itemId)) || i.nama === trx.itemNama);
+                
+                if (trx.tipe === 'penjualan') {
+                    // Penjualan batal -> kembalikan stok ke toko
+                    if (item) item.stok += trx.qty;
+                } else if (trx.tipe === 'masuk') {
+                    // Barang masuk batal -> tarik kembali stok
+                    if (item) item.stok = Math.max(0, item.stok - trx.qty);
+                } else if (trx.tipe === 'keluar') {
+                    // Pengurangan stok batal -> kembalikan stok
+                    if (item) item.stok += trx.qty;
+                }
+                
+                trx.isVoid = true;
+                trx.voidAt = new Date().toISOString();
+                
+                saveDataToStorage();
+                renderStokList();
+                updateDashboard();
+                populateSelectOptions();
+                renderTransactionHistory();
+                renderNotifications();
+                updateCharts();
+                
+                showToast(`Transaksi ${trx.id} berhasil dibatalkan!`);
+            }
+            closeModalConfirmDelete();
+            return;
+        }
+
         const itemIndex = items.findIndex(i => String(i.id) === String(itemToDeleteId));
             if (itemIndex !== -1) {
                 const itemNama = items[itemIndex].nama;
@@ -1412,6 +1512,7 @@
             transactions.unshift({
                 id: 'TRX-' + generateId().slice(0,8).toUpperCase(),
                 tipe: 'masuk',
+                itemId: existingItem.id,
                 itemNama: existingItem.nama,
                 qty: qtyMasuk,
                 satuan: existingItem.satuan,
@@ -1467,6 +1568,7 @@
             transactions.unshift({
                 id: 'TRX-' + generateId().slice(0,8).toUpperCase(),
                 tipe: 'penjualan',
+                itemId: item.id,
                 itemNama: item.nama,
                 qty: qty,
                 satuan: item.satuan,
@@ -1532,6 +1634,7 @@
             transactions.unshift({
                 id: 'TRX-' + generateId().slice(0,8).toUpperCase(),
                 tipe: 'keluar',
+                itemId: item.id,
                 itemNama: item.nama,
                 qty: qty,
                 satuan: item.satuan,
@@ -1568,7 +1671,11 @@
                 let iconName = 'arrow-up-right';
                 let typeText = 'Penjualan';
 
-                if (t.tipe === 'masuk') {
+                if (t.isVoid) {
+                    badgeClass = 'bg-slate-200 text-slate-500 line-through';
+                    iconName = 'ban';
+                    typeText = 'Dibatalkan';
+                } else if (t.tipe === 'masuk') {
                     badgeClass = 'bg-indigo-100 text-indigo-700';
                     iconName = 'arrow-down-left';
                     typeText = 'Barang Masuk';
@@ -1580,24 +1687,36 @@
 
                 const displayDate = t.timestamp ? formatDateTime(t.timestamp) : t.tglDisplay;
                 const displaySatuan = t.satuan || 'Pcs';
+                const isVoided = Boolean(t.isVoid);
 
                 container.innerHTML += `
-                    <div class="p-3 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center text-xs">
+                    <div class="p-3 ${isVoided ? 'bg-slate-100/70 border-dashed opacity-60' : 'bg-slate-50'} border border-slate-200 rounded-xl flex justify-between items-center text-xs">
                         <div class="flex items-center space-x-3">
-                            <div class="p-2 rounded-lg ${badgeClass}">
-                                <i data-lucide="${iconName}" class="w-4 h-4"></i>
+                            <div class="p-2 rounded-lg ${isVoided ? 'bg-slate-200 text-slate-400' : badgeClass}">
+                                <i data-lucide="${isVoided ? 'ban' : iconName}" class="w-4 h-4"></i>
                             </div>
                             <div>
                                 <div class="flex items-center space-x-1.5">
-                                    <span class="font-bold text-slate-800">${escapeHTML(t.itemNama)}</span>
+                                    <span class="font-bold text-slate-800 ${isVoided ? 'line-through text-slate-400' : ''}">${escapeHTML(t.itemNama)}</span>
                                     <span class="text-[9px] px-1.5 py-0.2 rounded font-bold ${badgeClass}">${typeText}</span>
+                                    <span class="text-[9px] text-slate-400 font-mono">${escapeHTML(t.id)}</span>
                                 </div>
-                                <p class="text-[10px] text-slate-400 mt-0.5">${displayDate} ${t.catatan ? '• ' + escapeHTML(t.catatan) : ''}</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">
+                                    ${displayDate} ${t.catatan ? '• ' + escapeHTML(t.catatan) : ''}
+                                    ${isVoided ? '• <span class="text-rose-500 font-semibold">Dibatalkan</span>' : ''}
+                                </p>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-bold text-slate-800">${t.qty} ${escapeHTML(displaySatuan)}</p>
-                            ${t.tipe === 'penjualan' ? `<p class="text-[10px] text-emerald-600 font-extrabold">+${formatRp(t.total)}</p>` : (t.tipe === 'masuk' ? `<p class="text-[10px] text-rose-600 font-extrabold">-${formatRp(t.total)}</p>` : '')}
+                        <div class="flex items-center space-x-2.5">
+                            <div class="text-right">
+                                <p class="font-bold text-slate-800 ${isVoided ? 'line-through text-slate-400' : ''}">${t.qty} ${escapeHTML(displaySatuan)}</p>
+                                ${!isVoided ? (t.tipe === 'penjualan' ? `<p class="text-[10px] text-emerald-600 font-extrabold">+${formatRp(t.total)}</p>` : (t.tipe === 'masuk' ? `<p class="text-[10px] text-rose-600 font-extrabold">-${formatRp(t.total)}</p>` : '')) : '<p class="text-[9px] text-slate-400 italic">Dibatalkan</p>'}
+                            </div>
+                            ${!isVoided ? `
+                                <button onclick="confirmVoidTransaction('${t.id}')" title="Batalkan Transaksi & Kembalikan Stok" class="p-1.5 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-lg transition" aria-label="Batalkan Transaksi">
+                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -1688,7 +1807,13 @@
                         },
                         scales: {
                             y: {
-                                ticks: { callback: value => 'Rp ' + (value/1000) + 'k', font: { size: 10 } },
+                                min: 0,
+                                max: 250000,
+                                ticks: {
+                                    stepSize: 50000,
+                                    callback: value => 'Rp ' + value.toLocaleString('id-ID'),
+                                    font: { size: 10 }
+                                },
                                 grid: { borderDash: [2, 2], color: '#f1f5f9' }
                             },
                             x: { ticks: { font: { size: 10, weight: 'bold' } }, grid: { display: false } }
@@ -1722,11 +1847,11 @@
         }
 
         function updateCharts() {
-            const salesTransactions = transactions.filter(t => t.tipe === 'penjualan');
+            const salesTransactions = transactions.filter(t => !t.isVoid && t.tipe === 'penjualan');
             const totalRevenue = salesTransactions.reduce((acc, curr) => acc + curr.total, 0);
             const totalLaba = salesTransactions.reduce((acc, curr) => acc + (curr.laba || 0), 0);
             
-            const masukTransactions = transactions.filter(t => t.tipe === 'masuk');
+            const masukTransactions = transactions.filter(t => !t.isVoid && t.tipe === 'masuk');
             const totalModal = masukTransactions.reduce((acc, curr) => acc + (curr.total || 0), 0);
 
             const netCashBalance = totalRevenue - totalModal; 
@@ -1785,6 +1910,10 @@
                     dailyTotals.push(daySales);
                 }
 
+                const maxSales = Math.max(...dailyTotals, 0);
+                const dynamicMax = Math.max(250000, Math.ceil(maxSales / 50000) * 50000);
+
+                salesChartInstance.options.scales.y.max = dynamicMax;
                 salesChartInstance.data.labels = labels;
                 salesChartInstance.data.datasets[0].data = dailyTotals;
                 salesChartInstance.update();
@@ -1804,6 +1933,95 @@
                 ];
                 categoryChartInstance.update();
             }
+        }
+
+        // --- FITUR CADANGAN DATA (EKSPOR & IMPOR JSON) ---
+        function exportDataJSON() {
+            const backupData = {
+                appName: "NataData",
+                version: "1.0.0",
+                exportedAt: new Date().toISOString(),
+                storeName: storeName,
+                storeLogo: storeLogo,
+                items: items,
+                transactions: transactions
+            };
+            const jsonStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeStore = (storeName || 'toko').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+            a.href = url;
+            a.download = 'natadata_backup_' + safeStore + '_' + getIsoDateStr() + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Cadangan data toko berhasil diekspor!');
+        }
+
+        function triggerImportJSON() {
+            const fileInput = document.getElementById('jsonFileInput');
+            if (fileInput) {
+                fileInput.value = '';
+                fileInput.click();
+            }
+        }
+
+        function handleFileImportJSON(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data || (!data.items && !data.transactions && !Array.isArray(data))) {
+                        showToast('Format berkas JSON cadangan tidak valid.', true);
+                        return;
+                    }
+
+                    if (!confirm('Impor cadangan akan menimpa data toko, produk, dan transaksi saat ini. Lanjutkan?')) {
+                        return;
+                    }
+
+                    if (data.storeName) storeName = data.storeName;
+                    if (data.storeLogo && data.storeLogo !== 'img/logo.jpeg') {
+                        storeLogo = data.storeLogo;
+                    } else {
+                        storeLogo = DEFAULT_LOGO;
+                    }
+
+                    items = Array.isArray(data.items) ? data.items : (Array.isArray(data) ? data : []);
+                    transactions = Array.isArray(data.transactions) ? data.transactions : [];
+
+                    saveDataToStorage();
+                    updateStoreNameUI(storeName);
+                    populateSelectOptions();
+                    renderStokList();
+                    updateDashboard();
+                    renderTransactionHistory();
+                    renderNotifications();
+                    updateCharts();
+                    closeModalNamaToko();
+                    showToast('Cadangan data toko berhasil dipulihkan!');
+                } catch (err) {
+                    console.error('Error saat impor JSON:', err);
+                    showToast('Gagal membaca berkas JSON: ' + err.message, true);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- FITUR PEMBATALAN TRANSAKSI (VOID) ---
+        function confirmVoidTransaction(trxId) {
+            const trx = transactions.find(t => t.id === trxId);
+            if (!trx || trx.isVoid) return;
+
+            itemToDeleteId = 'VOID_ACTION:' + trxId;
+            document.getElementById('confirmDeleteTitle').innerText = "Batalkan Transaksi?";
+            document.getElementById('confirmDeleteText').innerText = `Yakin ingin membatalkan transaksi ${trx.id} (${trx.itemNama})? Stok barang akan disesuaikan kembali.`;
+            document.getElementById('modalConfirmDelete').classList.remove('hidden');
         }
     </script>
 </body>
