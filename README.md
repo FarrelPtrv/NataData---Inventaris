@@ -10,10 +10,10 @@
 </p>
 
 <p align="center">
-  <a href="#fitur-utama"><img src="https://img.shields.io/badge/versi-1.0.0-emerald?style=flat-square" alt="Versi 1.0.0"></a>
-  <a href="#dukungan-platform"><img src="https://img.shields.io/badge/platform-Windows%20%7C%20Web%20%7C%20Android%20(CI)-blue?style=flat-square" alt="Platform"></a>
-  <a href="#arsitektur-teknologi"><img src="https://img.shields.io/badge/engine-Tauri%20v2%20%2B%20HTML5-indigo?style=flat-square" alt="Tauri v2"></a>
-  <a href="#mode-offline-penuh"><img src="https://img.shields.io/badge/offline-100%25%20ready-success?style=flat-square" alt="Offline Ready"></a>
+  <a href="https://github.com/FarrelPtrv/NataData---Inventaris/releases"><img src="https://img.shields.io/badge/Download-v1.0.0-2ea44f?style=flat-square&logo=github" alt="Unduh Versi 1.0.0"></a>
+  <a href="#dukungan-platform"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Web-blue?style=flat-square&logo=windows" alt="Platform"></a>
+  <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Framework-Tauri%20v2-24c8db?style=flat-square&logo=tauri" alt="Tauri v2"></a>
+  <a href="#fitur-baru--pembaruan-terkini"><img src="https://img.shields.io/badge/Mode-100%25%20Offline-success?style=flat-square" alt="Offline Ready"></a>
 </p>
 
 ---
