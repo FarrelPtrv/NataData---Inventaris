@@ -23,15 +23,13 @@
 1. [Tentang NataData](#tentang-natadata)
 2. [Fitur Utama](#fitur-utama)
 3. [Dukungan Platform](#dukungan-platform)
-4. [Struktur Direktori](#struktur-direktori)
-5. [Panduan Penggunaan Lokal](#panduan-penggunaan-lokal)
-   - [A. Menjalankan di Browser](#a-menjalankan-langsung-di-browser-web)
-   - [B. Menjalankan Mode Desktop (Tauri)](#b-menjalankan-sebagai-aplikasi-desktop-tauri)
-   - [C. Membangun Installer Desktop](#c-membangun-installer-desktop-windows)
-6. [Fitur Baru & Pembaruan Terkini](#fitur-baru--pembaruan-terkini)
+4. [Cara Mengunduh & Memasang Aplikasi](#cara-mengunduh--memasang-aplikasi)
+5. [Fitur Baru & Pembaruan Terkini](#fitur-baru--pembaruan-terkini)
+6. [Struktur Direktori](#struktur-direktori)
 7. [Hal yang Perlu Diketahui](#hal-yang-perlu-diketahui)
 8. [Indeks Dokumentasi](#indeks-dokumentasi)
-9. [Lisensi & Kontribusi](#lisensi--kontribusi)
+9. [Untuk Pengembang (Developer)](#untuk-pengembang-developer)
+10. [Lisensi & Kontribusi](#lisensi--kontribusi)
 
 ---
 
@@ -107,47 +105,37 @@ NataData---Inventaris/
 
 ---
 
-## Panduan Penggunaan Lokal
+## Cara Mengunduh & Memasang Aplikasi
 
-### A. Menjalankan Langsung di Browser Web
-Cara tercepat untuk mencoba atau memakai aplikasi tanpa instalasi alat pengembangan:
-1. Masuk ke folder `www/`.
+Bagi pengguna umum dan pelaku UMKM, Anda **tidak perlu mengunduh alat koding atau mengompilasi aplikasi**. Ikuti langkah praktis berikut untuk langsung menggunakan NataData di komputer Anda:
+
+### 1. Unduh Berkas Installer Windows
+Unduh berkas instalasi resmi dari tautan rilis berikut:
+👉 **[⬇️ Unduh NataData Versi Terbaru (Halaman Releases)](https://github.com/FarrelPtrv/NataData---Inventaris/releases/latest)**
+
+* **Berkas Installer:** `natadata_1.0.0_x64-setup.exe` (sekitar 2,1 MB)
+* **Sistem Operasi:** Windows 10 & Windows 11 (64-bit)
+
+### 2. Pasang di Komputer Anda
+1. Klik dua kali pada berkas `natadata_1.0.0_x64-setup.exe` yang telah diunduh.
+2. Ikuti panduan wizard instalasi hingga selesai.
+3. Buka aplikasi **NataData** melalui Start Menu atau pintasan Desktop.
+
+> **💡 Tips Peringatan Windows SmartScreen:**  
+> Jika muncul jendela pemberitahuan *"Windows protected your PC"* saat membuka installer (hal yang wajar pada aplikasi yang baru dirilis), klik **"More info"** lalu pilih **"Run anyway"** untuk melanjutkan instalasi.
+
+### 3. Mulai Mengelola Toko Anda
+1. Masukkan **Nama Toko UMKM Anda** di layar pendaftaran awal.
+2. Buat **PIN keamanan 6 angka** (catat PIN Anda di tempat aman).
+3. Masuk ke menu **Transaksi & Stok** untuk mulai mencatat barang masuk dan penjualan pertama Anda.
+
+---
+
+### Opsi Alternatif: Jalankan Langsung di Browser Web (Tanpa Instalasi)
+Jika Anda ingin mencoba aplikasi langsung di peramban web:
+1. Buka folder `www/`.
 2. Klik dua kali pada file `index.html` (atau klik kanan $\rightarrow$ *Open with* Chrome / Microsoft Edge / Firefox).
-3. Aplikasi langsung terbuka dan siap digunakan secara penuh.
-
-Atau jalankan melalui local server jika diinginkan:
-```bash
-npx serve www
-# atau dengan python
-python -m http.server 8000 --directory www
-```
-
-### B. Menjalankan sebagai Aplikasi Desktop (Tauri)
-**Prasyarat:**
-- [Node.js](https://nodejs.org/) (versi LTS $\ge$ 20.x atau 22.x)
-- [Rust & Cargo](https://rustup.rs/)
-- Di Windows: C++ Build Tools (via Visual Studio Installer) dan Microsoft Edge WebView2.
-
-**Langkah Menjalankan:**
-```bash
-# 1. Clone repository
-git clone https://github.com/FarrelPtrv/NataData---Inventaris.git
-cd NataData---Inventaris
-
-# 2. Pasang dependensi
-npm install
-
-# 3. Jalankan aplikasi desktop dalam mode development
-npm run tauri dev
-```
-
-### C. Membangun Installer Desktop Windows
-Untuk membuat berkas installer `.exe` / `.msi`:
-```bash
-npm run tauri build
-```
-Hasil installer akan terbentuk di folder:
-`src-tauri/target/release/bundle/nsis/` atau `src-tauri/target/release/bundle/msi/`.
+3. Aplikasi langsung terbuka, siap digunakan, dan tetap bekerja 100% offline.
 
 ---
 
@@ -191,6 +179,22 @@ Pelajari lebih lanjut mengenai arsitektur, panduan teknis, dan audit sistem mela
 * 📱 [**Panduan Build Android (Capacitor/Tauri)**](docs/ANDROID_BUILD.md): Dokumentasi persiapan lingkungan mobile dan workflow APK.
 * 🔍 [**Audit dan Rekomendasi Sistem**](docs/AUDIT_DAN_REKOMENDASI.md): Analisis statis mendalam, temuan teknis, dan roadmap jangka panjang.
 * ❓ [**Pemecahan Masalah (Troubleshooting)**](docs/TROUBLESHOOTING.md): Solusi gejala error umum, penanganan cache, dan pemulihan tampilan.
+
+---
+
+## Untuk Pengembang (Developer)
+
+Bagi pengembang yang ingin memodifikasi atau mengompilasi ulang aplikasi dari kode sumber:
+- **Arsitektur & Model Data:** Pelajari [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- **Kompilasi & Build Installer:** Ikuti panduan lengkap di [docs/TAURI_BUILD.md](docs/TAURI_BUILD.md)
+- **Pengujian & Kontribusi:** Ikuti daftar periksa di [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
+
+Perintah ringkas:
+```bash
+npm install            # Pasang dependensi
+npm run tauri dev      # Jalankan mode development desktop
+npm run tauri build    # Kompilasi installer produksi
+```
 
 ---
 
